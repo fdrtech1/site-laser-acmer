@@ -62,22 +62,19 @@ Isso é o ponto mais importante para o site parecer "no ar de verdade" em vez de
 
 **Por que arrastar uma foto no site ao vivo (GitHub Pages) não funciona hoje:** o componente `<x-import ... id="machinephoto">` (de `image-slot.js`) foi feito para uma ferramenta de edição específica (um "runtime omelette") que grava a imagem arrastada num arquivo `.image-slots.state.json` através de `window.omelette.writeFile`. O GitHub Pages é hospedagem 100% estática — não existe esse `window.omelette` nem um servidor para gravar esse arquivo. Resultado: se um visitante arrastar uma foto no site publicado, ela aparece só naquela sessão do navegador dele e some ao recarregar a página. Ninguém mais vê.
 
-**A forma correta de colocar fotos reais e definitivas no site:** usar o atributo `src` do próprio componente, que funciona como "imagem padrão" sempre visível (o comentário de uso em `image-slot.js` confirma: *"src — Optional initial/fallback image URL"*). Passos:
+**A forma correta de colocar fotos reais e definitivas no site:** usar o atributo `src` do próprio componente, que funciona como "imagem padrão" sempre visível (o comentário de uso em `image-slot.js` confirma: *"src — Optional initial/fallback image URL"*). **Isso já está pronto** — a pasta `images/` existe no repositório com placeholders no tamanho certo, e cada `<x-import>` do HTML já tem o `src="images/..."` apontando pra lá. Só falta você:
 
-1. Crie uma pasta `images/` na raiz do repositório.
-2. Salve suas fotos lá com estes nomes exatos (batendo com os `id` já usados no HTML):
+1. Redimensionar suas fotos com o **PowerToys Image Resizer** (botão direito no arquivo → "Redimensionar imagens") para os tamanhos da tabela abaixo.
+2. Salvar/sobrescrever o arquivo em `images/` **com o mesmo nome exato** do placeholder — não precisa mexer no HTML, ele já aponta pra lá.
+3. Fazer commit e push — pronto, a imagem passa a aparecer para todo mundo, permanentemente, sem depender de nenhuma ferramenta especial.
 
-| Nome do arquivo | Onde aparece | Proporção do quadro | Resolução recomendada |
+| Nome do arquivo (já existe como placeholder) | Onde aparece | Proporção do quadro | Resolução recomendada |
 |---|---|---|---|
 | `images/machine.jpg` | Foto da ACMER S1 (seção Máquina) | 4:3 | 1200×900px |
 | `images/founder.jpg` | Sua foto (seção Sobre Mim) | 1:1 (quadrado) | 1200×1200px |
-| `images/work1.jpg` … `images/work6.jpg` | Galeria de trabalhos (6 quadros) | 1:1 (quadrado) | 1200×1200px |
+| `images/work1.jpg` … `images/work6.jpg` | Galeria de trabalhos (6 quadros, cada um com sua tag: MDF/gravação, acrílico/corte, couro/brinde, metal/tag, MDF/decoração, personalizado) | 1:1 (quadrado) | 1200×1200px |
 
-3. Em `index.html`, adicione `src="images/machine.jpg"` (por exemplo) dentro da tag `<x-import>` correspondente. Ex.:
-   ```html
-   <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="machinephoto" shape="rect" fit="cover" placeholder="..." src="images/machine.jpg" style="..."></x-import>
-   ```
-4. Faça commit e push — pronto, a imagem passa a aparecer para todo mundo, permanentemente, sem depender de nenhuma ferramenta especial.
+No PowerToys, ao redimensionar, escolha "Tamanho personalizado" e digite a largura/altura da tabela — para as fotos quadradas (founder e work1–6), recorte a foto original num quadrado antes de redimensionar (o Editor de Fotos do Windows ou o Paint fazem esse corte) para não distorcer.
 
 **Por que esses valores:**
 - **1200px no lado maior** é o próprio limite (`MAX_DIM = 1200`) que o componente usa internamente para redimensionar — ir além disso é banda larga desperdiçada, sem ganho visual.
