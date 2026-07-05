@@ -149,15 +149,18 @@
         <div style="background:#0d0e13;border:1px solid rgba(252,238,10,.25);padding:30px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))">
           <!-- dropzone -->
           <div onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" onClick="{{ pickFile }}" style="border:2px dashed {{ dropBorder }};background:{{ dropBg }};padding:30px 20px;text-align:center;cursor:pointer;transition:.15s;position:relative">
-            <input type="file" accept=".dxf,.svg,.ai,.pdf,image/*" onChange="{{ onFileInput }}" ref="{{ fileRef }}" style="display:none">
+            <input type="file" accept=".dxf,.svg,.ai,.pdf,image/png,image/jpeg,image/webp" onChange="{{ onFileInput }}" ref="{{ fileRef }}" style="display:none">
             {{ previewImg }}
             <div style="font-size:34px;line-height:1;margin-bottom:8px;color:#fcee0a">{{ dropIcon }}</div>
             <div style="font-weight:600;color:#fff;font-size:16px">{{ dropTitle }}</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;letter-spacing:1px;margin-top:6px">DXF · SVG · AI · PDF · PNG · JPG — até 25MB</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;letter-spacing:1px;margin-top:6px">DXF · SVG · AI · PDF · PNG · JPG · WEBP — até 25MB</div>
           </div>
+          <sc-if value="{{ fileErr }}" hint-placeholder-val="{{ '' }}">
+            <div style="margin-top:8px;color:#ff6b6b;font-size:12px;font-weight:600">⚠ {{ fileErr }}</div>
+          </sc-if>
 
           <div style="margin-top:12px;padding:12px 14px;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.35);font-size:12px;color:#b8b8c4;line-height:1.55">
-            <b style="color:#00e5ff">COMO FUNCIONA O ENVIO:</b> fotos e imagens (PNG/JPG) sobem automaticamente aqui e o link já vai junto no seu pedido. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados direto na conversa do WhatsApp depois de fechar o orçamento.
+            <b style="color:#00e5ff">COMO FUNCIONA O ENVIO:</b> fotos e imagens (PNG/JPG/WEBP) sobem automaticamente aqui e o link já vai junto no seu pedido. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados direto na conversa do WhatsApp depois de fechar o orçamento. Por segurança, arquivos executáveis ou de script não são aceitos.
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px">
@@ -210,17 +213,18 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px">
             <label style="display:block">
               <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">SEU NOME</span>
-              <input type="text" value="{{ custName }}" onInput="{{ setName }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
+              <input type="text" maxlength="80" value="{{ custName }}" onInput="{{ setName }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
             </label>
             <label style="display:block">
               <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">WHATSAPP / E-MAIL</span>
-              <input type="text" value="{{ custContact }}" onInput="{{ setContact }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
+              <input type="text" maxlength="60" value="{{ custContact }}" onInput="{{ setContact }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
             </label>
           </div>
 
           <label style="display:block;margin-top:14px">
             <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">OBSERVAÇÕES</span>
-            <textarea onInput="{{ setNotes }}" value="{{ notes }}" rows="3" placeholder="Cores, profundidade de gravação, prazo desejado, referências..." style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none;resize:vertical"></textarea>
+            <textarea onInput="{{ setNotes }}" value="{{ notes }}" rows="3" maxlength="500" placeholder="Cores, profundidade de gravação, prazo desejado, referências..." style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none;resize:vertical"></textarea>
+            <div style="margin-top:6px;font-size:11px;color:#8a8a99">Evite colar links de sites desconhecidos aqui — se precisar mostrar uma referência, descreva ou anexe a imagem.</div>
           </label>
 
           <button onClick="{{ submitWhatsApp }}" style="width:100%;margin-top:22px;background:#fcee0a;color:#07070a;font-weight:700;font-size:16px;letter-spacing:1px;padding:16px;border:none;cursor:pointer;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)">ENVIAR PEDIDO VIA WHATSAPP ▸</button>
@@ -344,7 +348,7 @@
     <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px;text-align:center">// FREQUENTLY ASKED</div>
     <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1;text-align:center;margin-bottom:38px">PERGUNTAS <span style="color:#fcee0a">FREQUENTES</span></h2>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="7">
+      <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="8">
         <div onClick="{{ f.toggle }}" style="background:#0d0e13;border:1px solid {{ f.bd }};cursor:pointer">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px">
             <span style="color:#fff;font-weight:600;font-size:16px">{{ f.q }}</span>
@@ -403,13 +407,24 @@
 // ▼▼ UPLOAD DE FOTO — chave da conta imgbb do dono do site ▼▼
 const IMGBB_KEY = "088b9a743daeecb0cc80fdedc3895e97";
 
+// ▼▼ SEGURANÇA: listas de arquivo e limites — ver README.md, seção "Segurança" ▼▼
+const MAX_FILE_MB = 25;
+const ALLOWED_IMG_EXT = ["png", "jpg", "jpeg", "webp"];
+const ALLOWED_VECTOR_EXT = ["dxf", "svg", "ai", "pdf"];
+const DANGEROUS_EXT = new Set([
+  "exe", "scr", "bat", "cmd", "com", "msi", "msp", "jar", "apk", "dll",
+  "ps1", "ps1xml", "sh", "app", "pkg", "dmg", "iso", "lnk", "vbs", "vbe",
+  "js", "jse", "wsf", "wsh", "html", "htm", "hta", "reg", "vb", "gadget",
+  "cpl", "msc", "jsp", "php",
+]);
+
 class Component extends DCLogic {
   state = {
     widthCm: 10, heightCm: 10, qty: 1,
     service: "gravacao", material: "Madeira / MDF", complexity: "media",
     custName: "", custContact: "", notes: "",
     fileName: "", imgPreview: "", dragging: false,
-    fileUrl: "", uploading: false, upErr: false,
+    fileUrl: "", uploading: false, upErr: false, fileErr: "",
     faqOpen: 0,
   };
 
@@ -463,20 +478,52 @@ class Component extends DCLogic {
     };
   }
 
+  // ---------- segurança / sanitização ----------
+  // Remove caracteres invisíveis (zero-width, override de direção de texto -
+  // usados em golpes de "texto que trava o WhatsApp"), caracteres de controle
+  // e sequências de acentos empilhados ("zalgo"), além de limitar repetição
+  // e tamanho. Roda em todo texto digitado pelo cliente antes de virar
+  // mensagem no WhatsApp. Ver README.md, seção "Segurança".
+  getExt(name) {
+    const m = /\.([a-z0-9]+)$/i.exec(name || "");
+    return m ? m[1].toLowerCase() : "";
+  }
+  sanitizeText(str, maxLen) {
+    if (!str) return "";
+    const s = String(str)
+      .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, "") // zero-width / bidi override
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "") // caracteres de controle (mantem \n \t)
+      .replace(/[\u0300-\u036F]{3,}/g, "") // pilhas de acento combinavel ("zalgo")
+      .replace(/(.)\1{9,}/g, "$1$1$1") // colapsa 10+ repeticoes do mesmo caractere
+      .replace(/\n{4,}/g, "\n\n\n"); // limita linhas em branco seguidas
+    return s.slice(0, maxLen);
+  }
+
   // ---------- handlers ----------
   setNum(key) { return (e) => this.setState({ [key]: e.target.value }); }
   setWidth = this.setNum("widthCm");
   setHeight = this.setNum("heightCm");
   setQty = this.setNum("qty");
-  setName = (e) => this.setState({ custName: e.target.value });
-  setContact = (e) => this.setState({ custContact: e.target.value });
-  setNotes = (e) => this.setState({ notes: e.target.value });
+  setName = (e) => this.setState({ custName: this.sanitizeText(e.target.value, 80) });
+  setContact = (e) => this.setState({ custContact: this.sanitizeText(e.target.value, 60) });
+  setNotes = (e) => this.setState({ notes: this.sanitizeText(e.target.value, 500) });
   setMaterial = (e) => this.setState({ material: e.target.value });
 
   pickFile = () => { if (this.fileRef.current) this.fileRef.current.click(); };
   handleFile = (file) => {
     if (!file) return;
-    const isImg = /^image\//.test(file.type);
+    if (file.size > MAX_FILE_MB * 1024 * 1024) {
+      this.setState({ fileErr: "Arquivo maior que " + MAX_FILE_MB + "MB — envie um arquivo menor ou mande direto pelo WhatsApp.", imgPreview: "", fileName: "", fileUrl: "", uploading: false, upErr: false });
+      return;
+    }
+    const ext = this.getExt(file.name);
+    const isImg = /^image\//.test(file.type) && ALLOWED_IMG_EXT.includes(ext);
+    const isVector = ALLOWED_VECTOR_EXT.includes(ext);
+    if (DANGEROUS_EXT.has(ext) || (!isImg && !isVector)) {
+      this.setState({ fileErr: "Tipo de arquivo não aceito. Envie DXF, SVG, AI, PDF, PNG, JPG ou WEBP.", imgPreview: "", fileName: "", fileUrl: "", uploading: false, upErr: false });
+      return;
+    }
+    this.setState({ fileErr: "" });
     if (isImg) {
       const r = new FileReader();
       r.onload = () => this.setState({ imgPreview: r.result, fileName: file.name });
@@ -574,7 +621,9 @@ class Component extends DCLogic {
       "Estimativa do site: " + this.brl(c.total * 0.85) + " – " + this.brl(c.total * 1.15),
       this.state.notes ? ("Obs: " + this.state.notes) : "",
     ].filter(Boolean);
-    const url = "https://wa.me/" + this.waNumber() + "?text=" + encodeURIComponent(lines.join("\n"));
+    // sanitização final defensiva + limite de tamanho total da mensagem
+    const msg = this.sanitizeText(lines.join("\n"), 1500);
+    const url = "https://wa.me/" + this.waNumber() + "?text=" + encodeURIComponent(msg);
     window.open(url, "_blank");
   };
 
@@ -645,13 +694,14 @@ class Component extends DCLogic {
     ];
 
     const faqData = [
-      { q: "Quais arquivos vocês aceitam?", a: "Aceitamos DXF, SVG, AI e PDF (vetores, ideais para corte) e PNG/JPG em alta resolução (para gravação de imagens e fotos). Vetores garantem o corte mais preciso." },
-      { q: "Como eu envio meu arquivo?", a: "Fotos e imagens (JPG/PNG) você pode enviar aqui mesmo no site — o upload é automático e o link já vai junto no seu pedido do WhatsApp. Arquivos vetoriais (DXF, SVG, AI, PDF) são combinados e enviados diretamente na conversa do WhatsApp depois que o orçamento é fechado." },
+      { q: "Quais arquivos vocês aceitam?", a: "Aceitamos DXF, SVG, AI e PDF (vetores, ideais para corte) e PNG/JPG/WEBP em alta resolução (para gravação de imagens e fotos). Outros formatos, incluindo executáveis e scripts, são bloqueados automaticamente." },
+      { q: "Como eu envio meu arquivo?", a: "Fotos e imagens (JPG/PNG/WEBP) você pode enviar aqui mesmo no site — o upload é automático e o link já vai junto no seu pedido do WhatsApp. Arquivos vetoriais (DXF, SVG, AI, PDF) são combinados e enviados diretamente na conversa do WhatsApp depois que o orçamento é fechado." },
       { q: "Por que gravar uma foto custa mais que um desenho vetorial?", a: "Fotos e imagens fotográficas exigem tratamento em meio-tom e muito mais linhas de gravação para reproduzir os tons de cinza, o que aumenta bastante o tempo de máquina. Por isso a opção \"Foto/Imagem\" tem um valor diferenciado — o resultado compensa, com profundidade e riqueza de detalhes." },
       { q: "Como é calculado o preço?", a: "O valor combina o tempo de máquina (R$" + rate + "/hora), o material, o tamanho da peça, a complexidade do desenho, o tipo de serviço e a quantidade. A estimativa do site é uma faixa de partida — o valor final é confirmado por mim antes de iniciar." },
       { q: "Qual o tamanho máximo de gravação?", a: "A ACMER S1 grava e corta em uma área de até 130 x 130 mm. Para peças maiores, falamos sobre dividir o trabalho em partes." },
       { q: "Qual o prazo de entrega?", a: "Pedidos simples costumam ficar prontos em 2 a 4 dias úteis. Volumes maiores ou alta complexidade podem levar mais — combinamos o prazo no orçamento." },
       { q: "Vocês entregam ou é só retirada?", a: "Trabalhamos com retirada e também envio por transportadora/correios. O frete é calculado à parte conforme o destino." },
+      { q: "Como vocês cuidam da segurança dos arquivos enviados?", a: "O site só aceita os formatos DXF, SVG, AI, PDF, PNG, JPG e WEBP, até 25MB — qualquer outro tipo (executáveis, scripts, etc.) é bloqueado automaticamente. Ainda assim, por segurança, não abrimos arquivos ou links de origem desconhecida sem antes confirmar com quem enviou. Evite compartilhar links de sites que você não conhece nas observações do pedido." },
     ];
     const faqs = faqData.map((f, i) => ({
       ...f,
@@ -696,6 +746,7 @@ class Component extends DCLogic {
       pickFile: this.pickFile, fileRef: this.fileRef, onFileInput: this.onFileInput,
       onDragOver: this.onDragOver, onDragLeave: this.onDragLeave, onDrop: this.onDrop,
       submitWhatsApp: this.submitWhatsApp,
+      fileErr: s.fileErr,
       submitHint: s.uploading
         ? "Subindo sua foto... assim que terminar, o link dela vai junto no pedido."
         : (s.fileUrl
