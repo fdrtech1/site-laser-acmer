@@ -1,797 +1,372 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       SEGURANÇA — Content Security Policy (CSP) via meta tag.
+       Permite só o necessário: scripts próprios, fontes do Google,
+       upload de imagem no imgbb e imagens https (links do imgbb).
+       ============================================================ -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data: https:;
+    connect-src 'self' https://api.imgbb.com;
+    form-action 'self' https://wa.me;
+    frame-ancestors 'none';
+    base-uri 'self';
+    object-src 'none';
+  ">
+  <meta name="referrer" content="no-referrer">
+
+  <title>ACMER S1 — Gravação e Corte a Laser de Precisão</title>
+  <meta name="description" content="Gravação e corte a laser de precisão em madeira, alumínio anodizado, EVA e acrílico. Orçamento rápido pelo WhatsApp. Capelinha — MG.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#05060d">
+  <link rel="apple-touch-icon" href="images/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ACMER S1">
+
+  <!-- Fontes sci-fi (com fallback do sistema se offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<x-dc>
-<helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:#07070a;overflow-x:hidden}
-  ::selection{background:#fcee0a;color:#07070a}
-  ::-webkit-scrollbar{width:10px;height:10px}
-  ::-webkit-scrollbar-track{background:#0d0e13}
-  ::-webkit-scrollbar-thumb{background:#fcee0a;border:2px solid #0d0e13}
-  @keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
-  @keyframes glitchTop{0%,100%{clip-path:inset(0 0 60% 0);transform:translate(0)}20%{clip-path:inset(0 0 55% 0);transform:translate(-3px,0)}40%{clip-path:inset(0 0 65% 0);transform:translate(3px,0)}}
-  @keyframes glitchBot{0%,100%{clip-path:inset(60% 0 0 0);transform:translate(0)}20%{clip-path:inset(55% 0 0 0);transform:translate(3px,0)}40%{clip-path:inset(65% 0 0 0);transform:translate(-3px,0)}}
-  @keyframes flicker{0%,100%{opacity:1}48%{opacity:1}49%{opacity:.4}50%{opacity:1}92%{opacity:1}93%{opacity:.6}94%{opacity:1}}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
-  @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-  @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(252,238,10,.0)}50%{box-shadow:0 0 24px 0 rgba(252,238,10,.35)}}
-  .glitch-host:hover .gl-top{animation:glitchTop .4s steps(2) infinite}
-  .glitch-host:hover .gl-bot{animation:glitchBot .4s steps(2) infinite}
-</style>
-</helmet>
-<div style="background:#07070a;color:#e8e8ee;font-family:'Chakra Petch',sans-serif;min-height:100vh;position:relative">
 
-  <!-- scanline overlay -->
-  <div style="position:fixed;inset:0;pointer-events:none;z-index:60;background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,0,0,.18) 3px);mix-blend-mode:multiply"></div>
-  <div style="position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden"><div style="position:absolute;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(252,238,10,0),rgba(252,238,10,.05),rgba(252,238,10,0));animation:scan 7s linear infinite"></div></div>
+  <!-- fundo espacial animado (canvas) + grade de energia -->
+  <canvas id="space-canvas" aria-hidden="true"></canvas>
+  <div class="grid-overlay" aria-hidden="true"></div>
 
-  <!-- NAV -->
-  <nav style="position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(7,7,10,.82);backdrop-filter:blur(8px);border-bottom:1px solid rgba(252,238,10,.25);flex-wrap:wrap;gap:10px">
-    <a href="#top" style="display:flex;align-items:center;gap:12px;text-decoration:none">
-      <div style="width:30px;height:30px;border:2px solid #fcee0a;display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0,100% 0,100% 70%,80% 100%,0 100%);animation:flicker 5s infinite">
-        <span style="color:#fcee0a;font-weight:700;font-size:16px">L</span>
-      </div>
-      <div style="line-height:1">
-        <div style="font-weight:700;letter-spacing:2px;color:#fff;font-size:15px">{{ brandName }}</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#fcee0a;letter-spacing:3px">LASER // CNC SYSTEMS</div>
-      </div>
-    </a>
-    <div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap">
-      <a href="#maquina" style="color:#b8b8c4;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500">MÁQUINA</a>
-      <a href="#ideias" style="color:#b8b8c4;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500">IDEIAS</a>
-      <a href="#materiais" style="color:#b8b8c4;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500">MATERIAIS</a>
-      <a href="#galeria" style="color:#b8b8c4;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500">GALERIA</a>
-      <a href="#faq" style="color:#b8b8c4;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500">FAQ</a>
-      <a href="#orcamento" style="color:#07070a;background:#fcee0a;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:700;padding:9px 18px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">ORÇAMENTO →</a>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <header id="top" style="position:relative;padding:90px 28px 70px;max-width:1240px;margin:0 auto;overflow:hidden">
-    <div style="position:absolute;top:40px;right:28px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#00e5ff;text-align:right;line-height:1.7;opacity:.85">
-      SYS.STATUS <span style="color:#fcee0a">ONLINE</span><br>
-      ACMER_S1 // 2.5W OPTICAL<br>
-      LAT -23.55 / LON -46.63<br>
-      <span style="animation:blink 1.4s infinite">●</span> AGUARDANDO ARQUIVO
-    </div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#fcee0a;letter-spacing:4px;margin-bottom:18px">// PRECISION ENGRAVING &amp; CUTTING</div>
-    <div class="glitch-host" style="position:relative;display:inline-block">
-      <h1 style="font-size:clamp(46px,8vw,104px);font-weight:700;line-height:.92;letter-spacing:-1px;color:#fff;text-transform:uppercase;position:relative">{{ heroLine1 }}<br><span style="color:#fcee0a;text-shadow:0 0 26px rgba(252,238,10,.45)">{{ heroLine2 }}</span></h1>
-      <h1 aria-hidden="true" class="gl-top" style="position:absolute;inset:0;font-size:clamp(46px,8vw,104px);font-weight:700;line-height:.92;letter-spacing:-1px;text-transform:uppercase;color:#00e5ff;opacity:.0">{{ heroLine1 }}<br><span>{{ heroLine2 }}</span></h1>
-      <h1 aria-hidden="true" class="gl-bot" style="position:absolute;inset:0;font-size:clamp(46px,8vw,104px);font-weight:700;line-height:.92;letter-spacing:-1px;text-transform:uppercase;color:#ff2a4d;opacity:.0">{{ heroLine1 }}<br><span>{{ heroLine2 }}</span></h1>
-    </div>
-    <p style="max-width:560px;margin-top:26px;font-size:18px;line-height:1.6;color:#b8b8c4">{{ heroSub }}</p>
-    <div style="display:flex;gap:16px;margin-top:36px;flex-wrap:wrap">
-      <a href="#orcamento" style="display:inline-flex;align-items:center;gap:10px;background:#fcee0a;color:#07070a;font-weight:700;font-size:15px;letter-spacing:1px;padding:15px 28px;text-decoration:none;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);animation:pulseGlow 3s infinite">ENVIAR ARQUIVO &amp; ORÇAR ▸</a>
-      <a href="#galeria" style="display:inline-flex;align-items:center;gap:10px;background:transparent;color:#fcee0a;font-weight:600;font-size:15px;letter-spacing:1px;padding:15px 28px;text-decoration:none;border:1px solid rgba(252,238,10,.5)">VER TRABALHOS</a>
-    </div>
-    <div style="display:flex;gap:38px;margin-top:54px;flex-wrap:wrap">
-      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
-        <div>
-          <div style="font-size:34px;font-weight:700;color:#fcee0a;font-family:'Share Tech Mono',monospace;line-height:1">{{ s.v }}</div>
-          <div style="font-size:12px;color:#8a8a99;letter-spacing:2px;margin-top:4px">{{ s.k }}</div>
-        </div>
-      </sc-for>
+  <!-- ============================ NAV ============================ -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#topo">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span data-brand>ACMER S1</span>
+      </a>
+      <nav class="nav-links" aria-label="Menu principal">
+        <a href="#maquina">Máquina</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#orcamento">Calculadora</a>
+        <a href="#lote">Pedidos em lote</a>
+        <a href="#galeria">Galeria</a>
+        <a href="#sobre">Sobre</a>
+        <a class="btn btn-whats" data-wa-link data-wa-msg="Olá! Vim pelo site e quero um orçamento de gravação a laser.">WhatsApp</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Abrir menu">☰</button>
     </div>
   </header>
 
-  <!-- MARQUEE -->
-  <div style="border-top:1px solid rgba(252,238,10,.25);border-bottom:1px solid rgba(252,238,10,.25);background:#0a0a0f;overflow:hidden;white-space:nowrap;padding:11px 0">
-    <div style="display:inline-block;animation:marquee 24s linear infinite;font-family:'Share Tech Mono',monospace;color:#fcee0a;font-size:13px;letter-spacing:3px">{{ marqueeText }}{{ marqueeText }}</div>
+  <!-- ============================ HERO ============================ -->
+  <section class="hero" id="topo">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <span class="section-eyebrow">Gravação &amp; corte a laser</span>
+        <h1>Suas ideias <span class="glow-green">gravadas</span> com <span class="glow-red">precisão</span> de laser.</h1>
+        <p class="lead">Madeira, alumínio anodizado, EVA e acrílico. Peças únicas ou pedidos em lote — orçamento rápido e direto pelo WhatsApp.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#orcamento">CALCULAR MEU ORÇAMENTO ▸</a>
+          <a class="btn btn-ghost" href="#catalogo">Ver catálogo</a>
+        </div>
+        <div class="hero-specs">
+          <div class="spec"><div class="v" data-maq-potencia>2,5 W</div><div class="l">POTÊNCIA</div></div>
+          <div class="spec"><div class="v" data-maq-area>130 × 130 mm</div><div class="l">ÁREA ÚTIL</div></div>
+          <div class="spec"><div class="v" data-maq-vel>10.000 mm/min</div><div class="l">VELOCIDADE MÁX.</div></div>
+        </div>
+      </div>
+      <div class="hero-visual reveal-cut">
+        <img src="images/machine.jpg" alt="Máquina de gravação a laser em operação">
+        <div class="scanner" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- ============================ MÁQUINA ============================ -->
+  <section id="maquina">
+    <div class="container">
+      <span class="section-eyebrow reveal">Tecnologia</span>
+      <h2 class="section-title reveal">A <span class="accent">máquina</span> por trás das peças</h2>
+      <p class="lead reveal">Laser de diodo de alta precisão, ideal para detalhes finos e acabamento limpo em pequenas e médias peças.</p>
+      <div class="grid grid-4" style="margin-top:36px">
+        <div class="card reveal"><div class="card-ico">⚡</div><h3 data-maq-potencia>2,5 W</h3><p>Potência do laser de diodo, calibrada para gravação detalhada.</p></div>
+        <div class="card reveal"><div class="card-ico">▦</div><h3 data-maq-area>130 × 130 mm</h3><p>Área útil de trabalho — perfeita para peças e brindes.</p></div>
+        <div class="card reveal"><div class="card-ico">➤</div><h3 data-maq-vel>10.000 mm/min</h3><p>Velocidade máxima para produção ágil em lote.</p></div>
+        <div class="card reveal"><div class="card-ico">◎</div><h3>Alta precisão</h3><p>Detalhes finos e repetibilidade para pedidos em série.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- ============================ CATÁLOGO ============================ -->
+  <section id="catalogo">
+    <div class="container">
+      <span class="section-eyebrow reveal">Produtos &amp; serviços</span>
+      <h2 class="section-title reveal">O que a gente <span class="accent">grava e corta</span></h2>
+      <p class="lead reveal">Preços "a partir de" — o valor final sai no orçamento conforme tamanho, quantidade e complexidade.</p>
+      <div class="grid grid-3" id="catalogo-grid" style="margin-top:36px">
+        <!-- preenchido por js/catalog.js a partir de data/catalogo.json -->
+      </div>
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- ============================ CALCULADORA + FORMULÁRIO ============================ -->
+  <section id="orcamento">
+    <div class="container">
+      <span class="section-eyebrow reveal">Orçamento na hora</span>
+      <h2 class="section-title reveal">Calculadora de <span class="accent">preços</span></h2>
+      <p class="lead reveal">Monte seu pedido e veja a estimativa em tempo real. Depois é só enviar pelo WhatsApp — o valor final é confirmado na conversa.</p>
+
+      <div class="calc-wrap reveal" style="margin-top:36px">
+        <!-- COLUNA 1: campos -->
+        <div class="panel">
+          <div class="field">
+            <label for="calc-material">Material</label>
+            <select id="calc-material">
+              <option>Madeira / MDF</option>
+              <option>Alumínio anodizado</option>
+              <option>EVA</option>
+              <option>Acrílico</option>
+              <option>Couro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="calc-servico">Tipo de serviço</label>
+            <select id="calc-servico">
+              <option value="gravacao">Gravação a laser</option>
+              <option value="corte">Corte a laser</option>
+              <option value="foto">Gravação de foto/imagem</option>
+              <option value="personalizado">Personalizado / brinde</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tamanho da gravação (mm)</label>
+            <div class="row2">
+              <input id="calc-largura" type="number" min="1" max="130" value="100" inputmode="numeric" aria-label="Largura em mm">
+              <input id="calc-altura" type="number" min="1" max="130" value="100" inputmode="numeric" aria-label="Altura em mm">
+            </div>
+            <p class="status" style="color:var(--ink-dim);font-size:12px;margin-top:6px">Máx. 130 × 130 mm (área da máquina).</p>
+          </div>
+          <div class="field">
+            <label for="calc-complexidade">Complexidade do desenho</label>
+            <select id="calc-complexidade">
+              <option value="baixa">Baixa (texto / formas simples)</option>
+              <option value="media" selected>Média (logo / detalhes)</option>
+              <option value="alta">Alta (muitos detalhes finos)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="calc-qtd">Quantidade (peças)</label>
+            <input id="calc-qtd" type="number" min="1" value="1" inputmode="numeric">
+          </div>
+          <div class="field field-check">
+            <input id="calc-arte" type="checkbox">
+            <label for="calc-arte" style="margin:0;text-transform:none;letter-spacing:0;font-family:var(--font-body);font-size:15px;color:var(--ink)">Vou mandar uma imagem para vetorizar (taxa única de arte)</label>
+          </div>
+        </div>
+
+        <!-- COLUNA 2: resultado + formulário -->
+        <div class="calc-result">
+          <div class="result-box">
+            <div class="r-label">ESTIMATIVA</div>
+            <div class="r-price" id="r-price">R$ 0</div>
+            <div class="r-range" id="r-range"></div>
+            <span class="badge-lote" id="badge-lote" style="display:none"></span>
+            <div class="result-breakdown">
+              <div class="rb"><span>Por peça</span><b id="rb-peca">R$ 0</b></div>
+              <div class="rb"><span>Quantidade</span><b id="rb-qtd">1x</b></div>
+              <div class="rb"><span>Subtotal peças</span><b id="rb-subtotal">R$ 0</b></div>
+              <div class="rb" id="rb-desc-row" style="display:none"><span>Desconto de lote</span><b id="rb-desc" style="color:var(--laser-cyan)">—</b></div>
+              <div class="rb"><span>Taxa de arte</span><b id="rb-arte">—</b></div>
+            </div>
+            <p class="status" style="color:var(--ink-dim);font-size:12px;margin-top:14px">Estimativa automática. O valor final é confirmado no WhatsApp de acordo com o material e o arquivo.</p>
+          </div>
+
+          <!-- FORMULÁRIO DE ENVIO -->
+          <div class="panel" style="margin-top:18px">
+            <div class="field">
+              <label for="form-nome">Seu nome</label>
+              <input id="form-nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos te chamar">
+            </div>
+            <div class="field">
+              <label for="form-contato">WhatsApp ou e-mail</label>
+              <input id="form-contato" type="text" maxlength="60" placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="field">
+              <label>Arquivo (opcional)</label>
+              <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Enviar arquivo">
+                <div>📎 Toque ou arraste um arquivo aqui</div>
+                <div style="font-size:12px;margin-top:6px">PNG, JPG, WEBP, PDF, SVG, DXF, AI — até 25MB</div>
+                <img class="preview" id="upload-preview" alt="Pré-visualização" style="display:none">
+                <div class="status" id="upload-status"></div>
+              </div>
+              <input id="file-input" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf,.svg,.dxf,.ai,image/png,image/jpeg,image/webp,application/pdf" hidden>
+              <div class="msg-err" id="file-err"></div>
+            </div>
+
+            <div class="hint">
+              <b>COMO FUNCIONA O ENVIO:</b> fotos e imagens (PNG/JPG/WEBP) sobem automaticamente e o link já vai no seu pedido. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados direto na conversa do WhatsApp. Por segurança, arquivos executáveis ou de script não são aceitos.
+            </div>
+
+            <div class="field">
+              <label for="form-obs">Observações</label>
+              <textarea id="form-obs" rows="3" maxlength="500" placeholder="Detalhes do que você quer gravar/cortar"></textarea>
+            </div>
+
+            <button class="btn btn-whats" id="btn-enviar" style="width:100%">ENVIAR PEDIDO VIA WHATSAPP ▸</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- ============================ PEDIDOS EM LOTE ============================ -->
+  <section id="lote">
+    <div class="container">
+      <div class="lote-hero reveal">
+        <span class="section-eyebrow" style="justify-content:center">Produção em série</span>
+        <h2>Pedidos em <span class="glow-red">lote</span>? A gente resolve.</h2>
+        <p class="lead" style="margin:0 auto">Brindes corporativos, lembrancinhas, peças em série. Quanto maior o volume, maior o desconto — direto na calculadora e confirmado no WhatsApp Business.</p>
+        <div class="lote-feats">
+          <div class="lf"><div class="v">até 30%</div><div class="l">DE DESCONTO POR VOLUME</div></div>
+          <div class="lf"><div class="v">10.000 mm/min</div><div class="l">PRODUÇÃO ÁGIL</div></div>
+          <div class="lf"><div class="v">100+</div><div class="l">PEÇAS POR PEDIDO</div></div>
+        </div>
+        <a class="btn btn-whats" data-wa-link data-wa-msg="Olá! Quero um orçamento para PEDIDO EM LOTE (gravação em massa). Segue o que preciso:">FALAR SOBRE LOTE NO WHATSAPP ▸</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- ============================ GALERIA ============================ -->
+  <section id="galeria">
+    <div class="container">
+      <span class="section-eyebrow reveal">Portfólio</span>
+      <h2 class="section-title reveal">Trabalhos <span class="accent">realizados</span></h2>
+      <p class="lead reveal">Toque em uma imagem para ampliar.</p>
+      <div class="galeria" id="galeria-grid" style="margin-top:36px">
+        <!-- preenchido por js/gallery.js a partir de data/galeria.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- lightbox da galeria -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+    <button class="lb-close" aria-label="Fechar">✕</button>
+    <button class="lb-nav prev" aria-label="Anterior">‹</button>
+    <img id="lb-img" alt="">
+    <button class="lb-nav next" aria-label="Próxima">›</button>
+    <div class="lb-cap" id="lb-cap"></div>
   </div>
 
-  <!-- MÁQUINA -->
-  <section id="maquina" style="max-width:1240px;margin:0 auto;padding:80px 28px;display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center">
-    <div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:14px">// HARDWARE</div>
-      <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1;letter-spacing:-.5px">ACMER S1<br><span style="color:#fcee0a">2,5W DIODE LASER</span></h2>
-      <p style="margin-top:20px;color:#b8b8c4;font-size:16px;line-height:1.65">{{ machineDesc }}</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:30px;background:rgba(252,238,10,.2);border:1px solid rgba(252,238,10,.2)">
-        <sc-for list="{{ specs }}" as="sp" hint-placeholder-count="4">
-          <div style="background:#0d0e13;padding:16px 18px">
-            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;letter-spacing:2px">{{ sp.k }}</div>
-            <div style="font-size:19px;color:#fcee0a;font-weight:600;margin-top:4px">{{ sp.v }}</div>
-          </div>
-        </sc-for>
-      </div>
-    </div>
-    <div style="position:relative;aspect-ratio:4/3;border:1px solid rgba(252,238,10,.3);background:linear-gradient(135deg,#0d0e13,#111218)">
-      <div style="position:absolute;top:10px;left:10px;width:22px;height:22px;border-top:2px solid #fcee0a;border-left:2px solid #fcee0a"></div>
-      <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-top:2px solid #fcee0a;border-right:2px solid #fcee0a"></div>
-      <div style="position:absolute;bottom:10px;left:10px;width:22px;height:22px;border-bottom:2px solid #fcee0a;border-left:2px solid #fcee0a"></div>
-      <div style="position:absolute;bottom:10px;right:10px;width:22px;height:22px;border-bottom:2px solid #fcee0a;border-right:2px solid #fcee0a"></div>
-      <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="machinephoto" shape="rect" fit="cover" placeholder="Arraste uma foto da sua ACMER S1" src="images/machine.jpg" style="position:absolute;inset:18px;width:auto;height:auto" hint-size="100%,100%"></x-import>
-      <div style="position:absolute;bottom:16px;right:18px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#00e5ff;letter-spacing:2px;background:rgba(7,7,10,.7);padding:3px 8px">IMG_0001.RAW</div>
-    </div>
-  </section>
+  <div class="beam-divider"></div>
 
-  <!-- IDEIAS -->
-  <section id="ideias" style="background:#0a0a0f;border-top:1px solid rgba(252,238,10,.25);border-bottom:1px solid rgba(252,238,10,.25);padding:80px 28px">
-    <div style="max-width:1240px;margin:0 auto">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px">// PROJECT.IDEAS</div>
-      <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1">O QUE DÁ PRA <span style="color:#fcee0a">CRIAR</span></h2>
-      <p style="color:#b8b8c4;margin-top:14px;font-size:16px;max-width:640px">Do couro ao MDF, um laser de 2,5W abre um universo de possibilidades. Aqui vão algumas ideias pra você já sair inspirado:</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px">
-        <sc-for list="{{ ideas }}" as="idea" hint-placeholder-count="6">
-          <div style="background:#0d0e13;border:1px solid rgba(252,238,10,.2);padding:22px;display:flex;flex-direction:column;gap:10px">
-            <div style="color:#fcee0a;font-size:26px;line-height:1">{{ idea.icon }}</div>
-            <div style="color:#fff;font-weight:600;font-size:16px">{{ idea.title }}</div>
-            <div style="color:#8a8a99;font-size:13px;line-height:1.55;flex:1">{{ idea.desc }}</div>
-            <a href="#orcamento" style="margin-top:6px;color:#fcee0a;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.5px;border:1px solid rgba(252,238,10,.4);padding:9px 12px;text-align:center">QUERO ISSO ▸</a>
-          </div>
-        </sc-for>
+  <!-- ============================ DEPOIMENTOS ============================ -->
+  <section id="depoimentos">
+    <div class="container">
+      <span class="section-eyebrow reveal">Quem já pediu</span>
+      <h2 class="section-title reveal">O que os <span class="accent">clientes</span> dizem</h2>
+      <div class="depo" style="margin-top:36px">
+        <div class="card reveal"><p>"Ficou perfeito! A gravação saiu com um acabamento muito melhor do que eu esperava."</p><div class="who">— Marcos R.</div></div>
+        <div class="card reveal"><p>"Atendimento rápido pelo WhatsApp e entrega no prazo. Recomendo demais."</p><div class="who">— Ana P.</div></div>
+        <div class="card reveal"><p>"Nunca tinha usado gravação a laser. O atendimento facilitou muito do início ao fim."</p><div class="who">— Juliana T.</div></div>
       </div>
     </div>
   </section>
 
-  <!-- ORÇAMENTO -->
-  <section id="orcamento" style="padding:80px 28px">
-    <div style="max-width:1240px;margin:0 auto">
-      <div style="text-align:center;margin-bottom:46px">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px">// QUOTE TERMINAL</div>
-        <h2 style="font-size:clamp(30px,4.5vw,56px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1">SOLICITAR <span style="color:#fcee0a">ORÇAMENTO</span></h2>
-        <p style="color:#b8b8c4;margin-top:14px;font-size:16px">Envie seu DXF/SVG ou uma foto, informe o tamanho e veja a faixa estimada na hora.</p>
+  <div class="beam-divider"></div>
+
+  <!-- ============================ SOBRE ============================ -->
+  <section id="sobre">
+    <div class="container sobre-grid">
+      <div class="sobre-photo reveal-cut">
+        <img src="images/founder.jpg" alt="Fernando — fundador">
       </div>
-
-      <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:start">
-        <!-- FORM -->
-        <div style="background:#0d0e13;border:1px solid rgba(252,238,10,.25);padding:30px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))">
-          <!-- dropzone -->
-          <div onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" onClick="{{ pickFile }}" style="border:2px dashed {{ dropBorder }};background:{{ dropBg }};padding:30px 20px;text-align:center;cursor:pointer;transition:.15s;position:relative">
-            <input type="file" accept=".dxf,.svg,.ai,.pdf,image/png,image/jpeg,image/webp" onChange="{{ onFileInput }}" ref="{{ fileRef }}" style="display:none">
-            {{ previewImg }}
-            <div style="font-size:34px;line-height:1;margin-bottom:8px;color:#fcee0a">{{ dropIcon }}</div>
-            <div style="font-weight:600;color:#fff;font-size:16px">{{ dropTitle }}</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;letter-spacing:1px;margin-top:6px">DXF · SVG · AI · PDF · PNG · JPG · WEBP — até 25MB</div>
-          </div>
-          <sc-if value="{{ fileErr }}" hint-placeholder-val="{{ '' }}">
-            <div style="margin-top:8px;color:#ff6b6b;font-size:12px;font-weight:600">⚠ {{ fileErr }}</div>
-          </sc-if>
-
-          <div style="margin-top:12px;padding:12px 14px;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.35);font-size:12px;color:#b8b8c4;line-height:1.55">
-            <b style="color:#00e5ff">COMO FUNCIONA O ENVIO:</b> fotos e imagens (PNG/JPG/WEBP) sobem automaticamente aqui e o link já vai junto no seu pedido. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados direto na conversa do WhatsApp depois de fechar o orçamento. Por segurança, arquivos executáveis ou de script não são aceitos.
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px">
-            <label style="display:block">
-              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">LARGURA (cm)</span>
-              <input type="number" min="0" value="{{ widthCm }}" onInput="{{ setWidth }}" placeholder="0" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Share Tech Mono',monospace;font-size:15px;outline:none">
-            </label>
-            <label style="display:block">
-              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">ALTURA (cm)</span>
-              <input type="number" min="0" value="{{ heightCm }}" onInput="{{ setHeight }}" placeholder="0" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Share Tech Mono',monospace;font-size:15px;outline:none">
-            </label>
-          </div>
-
-          <div style="margin-top:14px">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">SERVIÇO</span>
-            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-              <sc-for list="{{ serviceOpts }}" as="opt" hint-placeholder-count="4">
-                <button onClick="{{ opt.select }}" style="flex:1;min-width:90px;background:{{ opt.bg }};color:{{ opt.fg }};border:1px solid {{ opt.bd }};padding:10px 8px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:.5px">{{ opt.label }}</button>
-              </sc-for>
-            </div>
-            <sc-if value="{{ isFotoService }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:8px;font-size:12px;color:#8a8a99;line-height:1.5">Gravação de foto/imagem consome bem mais tempo de laser (meio-tom, várias passadas) — por isso o valor é mais alto. O acabamento compensa.</div>
-            </sc-if>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
-            <label style="display:block">
-              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">MATERIAL</span>
-              <select onChange="{{ setMaterial }}" value="{{ material }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
-                <sc-for list="{{ materialNames }}" as="m" hint-placeholder-count="5">
-                  <option value="{{ m }}">{{ m }}</option>
-                </sc-for>
-              </select>
-            </label>
-            <label style="display:block">
-              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">QUANTIDADE</span>
-              <input type="number" min="1" value="{{ qty }}" onInput="{{ setQty }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Share Tech Mono',monospace;font-size:15px;outline:none">
-            </label>
-          </div>
-
-          <div style="margin-top:14px">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">COMPLEXIDADE / DETALHE</span>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <sc-for list="{{ complexityOpts }}" as="c" hint-placeholder-count="3">
-                <button onClick="{{ c.select }}" style="flex:1;background:{{ c.bg }};color:{{ c.fg }};border:1px solid {{ c.bd }};padding:10px 8px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:13px;cursor:pointer">{{ c.label }}</button>
-              </sc-for>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px">
-            <label style="display:block">
-              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">SEU NOME</span>
-              <input type="text" maxlength="80" value="{{ custName }}" onInput="{{ setName }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
-            </label>
-            <label style="display:block">
-              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">WHATSAPP / E-MAIL</span>
-              <input type="text" maxlength="60" value="{{ custContact }}" onInput="{{ setContact }}" style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none">
-            </label>
-          </div>
-
-          <label style="display:block;margin-top:14px">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">OBSERVAÇÕES</span>
-            <textarea onInput="{{ setNotes }}" value="{{ notes }}" rows="3" maxlength="500" placeholder="Cores, profundidade de gravação, prazo desejado, referências..." style="width:100%;margin-top:6px;background:#07070a;border:1px solid rgba(252,238,10,.3);color:#fff;padding:11px 12px;font-family:'Chakra Petch',sans-serif;font-size:14px;outline:none;resize:vertical"></textarea>
-            <div style="margin-top:6px;font-size:11px;color:#8a8a99">Evite colar links de sites desconhecidos aqui — se precisar mostrar uma referência, descreva ou anexe a imagem.</div>
-          </label>
-
-          <button onClick="{{ submitWhatsApp }}" style="width:100%;margin-top:22px;background:#fcee0a;color:#07070a;font-weight:700;font-size:16px;letter-spacing:1px;padding:16px;border:none;cursor:pointer;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)">ENVIAR PEDIDO VIA WHATSAPP ▸</button>
-          <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;text-align:center;margin-top:10px;line-height:1.5">{{ submitHint }}</p>
-        </div>
-
-        <!-- ESTIMATE PANEL -->
-        <div style="position:sticky;top:90px">
-          <div style="background:linear-gradient(135deg,#0d0e13,#100f08);border:1px solid #fcee0a;padding:30px;position:relative;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))">
-            <div style="position:absolute;top:14px;right:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#00e5ff;letter-spacing:2px"><span style="animation:blink 1.3s infinite">●</span> CALCULANDO</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#fcee0a;letter-spacing:3px">// ESTIMATIVA</div>
-            <div style="font-size:13px;color:#8a8a99;margin-top:18px;letter-spacing:1px">FAIXA ESTIMADA (TOTAL · {{ qty }}x)</div>
-            <div style="font-size:clamp(36px,5vw,54px);font-weight:700;color:#fff;line-height:1;margin-top:6px;font-family:'Share Tech Mono',monospace">{{ estLow }}<span style="color:#fcee0a"> – </span>{{ estHigh }}</div>
-            <div style="height:1px;background:rgba(252,238,10,.2);margin:22px 0"></div>
-            <div style="display:flex;flex-direction:column;gap:11px">
-              <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="4">
-                <div style="display:flex;justify-content:space-between;align-items:baseline">
-                  <span style="color:#b8b8c4;font-size:14px">{{ b.k }}</span>
-                  <span style="color:#fff;font-family:'Share Tech Mono',monospace;font-size:14px">{{ b.v }}</span>
-                </div>
-              </sc-for>
-            </div>
-            <div style="height:1px;background:rgba(252,238,10,.2);margin:22px 0"></div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <span style="color:#fcee0a;font-weight:600;letter-spacing:1px">VALOR/HORA</span>
-              <span style="color:#fcee0a;font-family:'Share Tech Mono',monospace;font-size:20px;font-weight:700">{{ rateLabel }}</span>
-            </div>
-            <p style="font-size:12px;color:#8a8a99;margin-top:20px;line-height:1.55;font-family:'Share Tech Mono',monospace">{{ estimateNote }}</p>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:14px">
-            <sc-for list="{{ trustBadges }}" as="t" hint-placeholder-count="3">
-              <div style="flex:1;background:#0d0e13;border:1px solid rgba(252,238,10,.2);padding:12px;text-align:center">
-                <div style="color:#fcee0a;font-size:20px;line-height:1">{{ t.icon }}</div>
-                <div style="font-size:11px;color:#b8b8c4;margin-top:6px;letter-spacing:.5px">{{ t.label }}</div>
-              </div>
-            </sc-for>
-          </div>
-        </div>
+      <div class="reveal">
+        <span class="section-eyebrow">Sobre</span>
+        <h2 class="section-title">Feito com <span class="accent">dedicação</span>, peça por peça</h2>
+        <p class="lead">Sou o Fernando, fundador da <span data-brand>ACMER S1</span>. Comecei a estudar gravação e corte a laser por paixão em transformar ideias simples em peças reais — hoje coloco essa mesma dedicação em cada pedido. Cuido pessoalmente de cada etapa, do primeiro contato no WhatsApp até a entrega, para garantir o acabamento e a precisão que eu mesmo esperaria receber.</p>
+        <div style="margin-top:18px;font-family:var(--font-mono);font-size:13px;color:var(--laser-cyan);letter-spacing:1px">FERNANDO — FUNDADOR, <span data-brand>ACMER S1</span> · <span data-cidade>Capelinha — MG</span></div>
       </div>
     </div>
   </section>
 
-  <!-- MATERIAIS -->
-  <section id="materiais" style="max-width:1240px;margin:0 auto;padding:80px 28px">
-    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px">// PRICE MATRIX</div>
-    <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1">MATERIAIS &amp; <span style="color:#fcee0a">REFERÊNCIAS</span></h2>
-    <p style="color:#b8b8c4;margin-top:14px;font-size:16px;max-width:640px">Faixas de partida por material. O valor final depende do tamanho, complexidade e quantidade — sempre confirmado no orçamento.</p>
-    <div style="margin-top:34px;border:1px solid rgba(252,238,10,.25)">
-      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;background:#0d0e13;border-bottom:1px solid rgba(252,238,10,.25)">
-        <div style="padding:14px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">MATERIAL</div>
-        <div style="padding:14px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">GRAVAÇÃO</div>
-        <div style="padding:14px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">CORTE</div>
-        <div style="padding:14px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px">NOTA</div>
-      </div>
-      <sc-for list="{{ materials }}" as="mat" hint-placeholder-count="6">
-        <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;border-bottom:1px solid rgba(252,238,10,.08);background:{{ mat.rowBg }}">
-          <div style="padding:15px 18px;color:#fff;font-weight:600;display:flex;align-items:center;gap:10px"><span style="color:#fcee0a">{{ mat.icon }}</span>{{ mat.name }}</div>
-          <div style="padding:15px 18px;color:#b8b8c4;font-family:'Share Tech Mono',monospace;font-size:14px">{{ mat.engrave }}</div>
-          <div style="padding:15px 18px;color:#b8b8c4;font-family:'Share Tech Mono',monospace;font-size:14px">{{ mat.cut }}</div>
-          <div style="padding:15px 18px;color:#8a8a99;font-size:13px">{{ mat.note }}</div>
-        </div>
-      </sc-for>
-    </div>
-    <p style="color:#8a8a99;margin-top:16px;font-size:13px;line-height:1.6;max-width:720px">* Gravação de fotos e imagens fotográficas (com tons de cinza) consome bem mais tempo de máquina do que um desenho vetorial simples. Por isso ela entra como serviço separado no orçamento ("Foto/Imagem"), com valor um pouco mais alto — o resultado compensa, com profundidade e riqueza de detalhes.</p>
-  </section>
+  <div class="beam-divider"></div>
 
-  <!-- GALERIA -->
-  <section id="galeria" style="background:#0a0a0f;border-top:1px solid rgba(252,238,10,.25);border-bottom:1px solid rgba(252,238,10,.25);padding:80px 28px">
-    <div style="max-width:1240px;margin:0 auto">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px">// PORTFOLIO.DAT</div>
-      <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1">TRABALHOS <span style="color:#fcee0a">REALIZADOS</span></h2>
-      <p style="color:#b8b8c4;margin-top:14px;font-size:16px;max-width:640px">Arraste suas próprias fotos para cada quadro — elas ficam salvas automaticamente.</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px">
-        <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="6">
-          <div style="position:relative;aspect-ratio:1;border:1px solid rgba(252,238,10,.25);background:#0d0e13">
-            <div style="position:absolute;top:8px;left:8px;width:16px;height:16px;border-top:2px solid #fcee0a;border-left:2px solid #fcee0a;z-index:2"></div>
-            <div style="position:absolute;bottom:8px;right:8px;width:16px;height:16px;border-bottom:2px solid #fcee0a;border-right:2px solid #fcee0a;z-index:2"></div>
-            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ g.id }}" shape="rect" fit="cover" placeholder="{{ g.label }}" src="{{ g.src }}" style="position:absolute;inset:0;width:auto;height:auto" hint-size="100%,100%"></x-import>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:linear-gradient(0deg,rgba(7,7,10,.9),transparent);font-family:'Share Tech Mono',monospace;font-size:10px;color:#fcee0a;letter-spacing:1px;z-index:2">{{ g.tag }}</div>
-          </div>
-        </sc-for>
+  <!-- ============================ FAQ ============================ -->
+  <section id="faq">
+    <div class="container" style="max-width:800px">
+      <span class="section-eyebrow reveal">Dúvidas</span>
+      <h2 class="section-title reveal">Perguntas <span class="accent">frequentes</span></h2>
+      <div style="margin-top:28px">
+        <div class="faq-item reveal"><button class="faq-q">Como eu envio meu arquivo?<span class="plus">+</span></button><div class="faq-a"><p>Fotos e imagens (JPG/PNG/WEBP) você envia aqui mesmo no site — o upload é automático e o link já vai junto no seu pedido do WhatsApp. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados diretamente na conversa do WhatsApp depois que o orçamento é fechado.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">Quais materiais vocês gravam?<span class="plus">+</span></button><div class="faq-a"><p>Madeira/MDF, alumínio anodizado, EVA, acrílico e couro. Se tiver dúvida sobre um material específico, é só perguntar no WhatsApp.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">Qual o tamanho máximo da peça?<span class="plus">+</span></button><div class="faq-a"><p>A área útil da máquina é de 130 × 130 mm. Peças maiores podem ser feitas em partes — fale com a gente.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">Vocês fazem pedidos em lote?<span class="plus">+</span></button><div class="faq-a"><p>Sim! Quanto maior a quantidade, maior o desconto. Use a calculadora com a quantidade real para ver a estimativa com desconto de lote.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">A estimativa do site é o preço final?<span class="plus">+</span></button><div class="faq-a"><p>É uma estimativa automática para você ter uma ideia. O valor final é confirmado no WhatsApp conforme o material, o arquivo e os detalhes do pedido.</p></div></div>
       </div>
     </div>
   </section>
 
-  <!-- DEPOIMENTOS -->
-  <section id="depoimentos" style="max-width:1240px;margin:0 auto;padding:80px 28px">
-    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px">// CLIENT.LOG</div>
-    <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1">O QUE OS <span style="color:#fcee0a">CLIENTES DIZEM</span></h2>
-    <p style="color:#b8b8c4;margin-top:14px;font-size:16px;max-width:640px">Um resumo do retorno de quem já recebeu peças gravadas com a ACMER S1.</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px">
-      <sc-for list="{{ testimonials }}" as="dep" hint-placeholder-count="5">
-        <div style="background:#0d0e13;border:1px solid rgba(252,238,10,.2);padding:22px;display:flex;flex-direction:column;gap:14px">
-          <div style="color:#fcee0a;font-size:20px;line-height:1">❝</div>
-          <div style="color:#e8e8ee;font-size:14px;line-height:1.6;flex:1">{{ dep.quote }}</div>
-          <div style="color:#fcee0a;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px">— {{ dep.name }}</div>
-        </div>
-      </sc-for>
-    </div>
-  </section>
-
-  <!-- SOBRE -->
-  <section id="sobre" style="background:#0a0a0f;border-top:1px solid rgba(252,238,10,.25);border-bottom:1px solid rgba(252,238,10,.25);padding:80px 28px">
-    <div style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1.3fr;gap:54px;align-items:center">
-      <div style="position:relative;aspect-ratio:1;border:1px solid rgba(252,238,10,.3);background:linear-gradient(135deg,#0d0e13,#111218)">
-        <div style="position:absolute;top:10px;left:10px;width:22px;height:22px;border-top:2px solid #fcee0a;border-left:2px solid #fcee0a"></div>
-        <div style="position:absolute;bottom:10px;right:10px;width:22px;height:22px;border-bottom:2px solid #fcee0a;border-right:2px solid #fcee0a"></div>
-        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="founderphoto" shape="rect" fit="cover" placeholder="Arraste uma foto sua" src="images/founder.jpg" style="position:absolute;inset:18px;width:auto;height:auto" hint-size="100%,100%"></x-import>
-      </div>
-      <div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:14px">// FOUNDER.LOG</div>
-        <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1;letter-spacing:-.5px">SOBRE <span style="color:#fcee0a">MIM</span></h2>
-        <p style="margin-top:20px;color:#b8b8c4;font-size:16px;line-height:1.65">{{ founderBio }}</p>
-        <div style="margin-top:20px;font-family:'Share Tech Mono',monospace;font-size:12px;color:#fcee0a;letter-spacing:2px">FERNANDO — FUNDADOR &amp; CEO, {{ brandName }}</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" style="max-width:900px;margin:0 auto;padding:80px 28px">
-    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00e5ff;letter-spacing:4px;margin-bottom:12px;text-align:center">// FREQUENTLY ASKED</div>
-    <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;color:#fff;text-transform:uppercase;line-height:1;text-align:center;margin-bottom:38px">PERGUNTAS <span style="color:#fcee0a">FREQUENTES</span></h2>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="8">
-        <div onClick="{{ f.toggle }}" style="background:#0d0e13;border:1px solid {{ f.bd }};cursor:pointer">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px">
-            <span style="color:#fff;font-weight:600;font-size:16px">{{ f.q }}</span>
-            <span style="color:#fcee0a;font-size:22px;font-family:'Share Tech Mono',monospace;line-height:1">{{ f.sign }}</span>
-          </div>
-          <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
-            <div style="padding:0 22px 20px;color:#b8b8c4;font-size:15px;line-height:1.6">{{ f.a }}</div>
-          </sc-if>
-        </div>
-      </sc-for>
-    </div>
-  </section>
-
-  <!-- FOOTER / CTA -->
-  <footer style="background:#0a0a0f;border-top:1px solid rgba(252,238,10,.25);padding:64px 28px 40px">
-    <div style="max-width:1240px;margin:0 auto">
-      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;align-items:start">
+  <!-- ============================ FOOTER ============================ -->
+  <footer>
+    <div class="container">
+      <div class="foot-grid">
         <div>
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-            <div style="width:30px;height:30px;border:2px solid #fcee0a;display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0,100% 0,100% 70%,80% 100%,0 100%)"><span style="color:#fcee0a;font-weight:700;font-size:16px">L</span></div>
-            <div style="font-weight:700;letter-spacing:2px;color:#fff;font-size:18px">{{ brandName }}</div>
-          </div>
-          <p style="color:#8a8a99;font-size:14px;line-height:1.6;max-width:340px">{{ footerBlurb }}</p>
+          <div class="brand" style="margin-bottom:12px"><span class="logo-mark" aria-hidden="true"></span><span data-brand>ACMER S1</span></div>
+          <p style="color:var(--ink-dim);font-size:15px" data-slogan>Gravação e corte a laser de precisão</p>
+          <p style="color:var(--ink-dim);font-size:14px;margin-top:6px" data-cidade>Capelinha — MG</p>
         </div>
         <div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px;margin-bottom:14px">CONTATO</div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <a href="{{ waLink }}" style="color:#e8e8ee;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:8px">▸ WhatsApp</a>
-            <a href="{{ igLink }}" style="color:#e8e8ee;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:8px" target="_blank" rel="noopener">▸ Instagram</a>
-            <a href="{{ mailLink }}" style="color:#e8e8ee;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:8px">▸ E-mail</a>
-          </div>
+          <h3 style="font-size:15px;margin-bottom:8px">Navegar</h3>
+          <a href="#maquina">Máquina</a><a href="#catalogo">Catálogo</a><a href="#orcamento">Calculadora</a><a href="#galeria">Galeria</a>
         </div>
         <div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fcee0a;letter-spacing:2px;margin-bottom:14px">NAVEGAÇÃO</div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <a href="#maquina" style="color:#e8e8ee;text-decoration:none;font-size:15px">Máquina</a>
-            <a href="#ideias" style="color:#e8e8ee;text-decoration:none;font-size:15px">Ideias</a>
-            <a href="#orcamento" style="color:#e8e8ee;text-decoration:none;font-size:15px">Orçamento</a>
-            <a href="#materiais" style="color:#e8e8ee;text-decoration:none;font-size:15px">Materiais</a>
-            <a href="#galeria" style="color:#e8e8ee;text-decoration:none;font-size:15px">Galeria</a>
-            <a href="#depoimentos" style="color:#e8e8ee;text-decoration:none;font-size:15px">Depoimentos</a>
-            <a href="#sobre" style="color:#e8e8ee;text-decoration:none;font-size:15px">Sobre</a>
-            <a href="#faq" style="color:#e8e8ee;text-decoration:none;font-size:15px">FAQ</a>
-          </div>
+          <h3 style="font-size:15px;margin-bottom:8px">Contato</h3>
+          <a data-wa-link data-wa-msg="Olá! Vim pelo site.">▸ WhatsApp</a>
+          <a data-insta>▸ Instagram</a>
+          <a data-email></a>
         </div>
       </div>
-      <div style="margin-top:48px;padding-top:20px;border-top:1px solid rgba(252,238,10,.15);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;letter-spacing:1px">© {{ year }} {{ brandName }} — Todos os direitos reservados.</span>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a99;letter-spacing:1px">VALOR/HORA: {{ rateLabel }}</span>
-      </div>
+      <div class="foot-bottom">© <span data-ano>2026</span> <span data-brand>ACMER S1</span> — Todos os direitos reservados.</div>
     </div>
   </footer>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900},&quot;brandName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;ACMER S1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;hourlyRate&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:200,&quot;min&quot;:50,&quot;max&quot;:500,&quot;step&quot;:10,&quot;unit&quot;:&quot;R$/h&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Preço&quot;},&quot;whatsapp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;5511912130716&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Contato&quot;},&quot;instagram&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://www.instagram.com/_fernando.dr/&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Contato&quot;},&quot;email&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;fernandoxjc@icloud.com&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Contato&quot;}}">
-// ▼▼ UPLOAD DE FOTO — chave da conta imgbb do dono do site ▼▼
-const IMGBB_KEY = "088b9a743daeecb0cc80fdedc3895e97";
 
-// ▼▼ SEGURANÇA: listas de arquivo e limites — ver README.md, seção "Segurança" ▼▼
-const MAX_FILE_MB = 25;
-const ALLOWED_IMG_EXT = ["png", "jpg", "jpeg", "webp"];
-const ALLOWED_VECTOR_EXT = ["dxf", "svg", "ai", "pdf"];
-const DANGEROUS_EXT = new Set([
-  "exe", "scr", "bat", "cmd", "com", "msi", "msp", "jar", "apk", "dll",
-  "ps1", "ps1xml", "sh", "app", "pkg", "dmg", "iso", "lnk", "vbs", "vbe",
-  "js", "jse", "wsf", "wsh", "html", "htm", "hta", "reg", "vb", "gadget",
-  "cpl", "msc", "jsp", "php",
-]);
+  <!-- botão flutuante WhatsApp -->
+  <a class="fab-whats" data-wa-link data-wa-msg="Olá! Vim pelo site e quero um orçamento." aria-label="Falar no WhatsApp">✆</a>
 
-class Component extends DCLogic {
-  state = {
-    widthCm: 10, heightCm: 10, qty: 1,
-    service: "gravacao", material: "Madeira / MDF", complexity: "media",
-    custName: "", custContact: "", notes: "",
-    fileName: "", imgPreview: "", dragging: false,
-    fileUrl: "", uploading: false, upErr: false, fileErr: "",
-    faqOpen: 0,
-  };
+  <!-- toast instalar PWA -->
+  <div class="pwa-toast" id="pwa-toast">
+    <span>📲 Instale o app da <b data-brand>ACMER S1</b> no seu celular.</span>
+    <button id="pwa-install">Instalar</button>
+    <button class="x" id="pwa-close" aria-label="Fechar">✕</button>
+  </div>
 
-  fileRef = React.createRef();
-
-  // ---------- pricing ----------
-  rate() { return Number(this.props.hourlyRate ?? 180); }
-
-  brl(n) {
-    return "R$" + Math.round(n).toLocaleString("pt-BR");
-  }
-
-  materialFactor(name) {
-    const m = {
-      "Madeira / MDF": 1.0, "Acrílico": 1.15, "Couro": 1.1,
-      "Plástico": 1.05, "Papel / papelão": 0.8, "Metal anodizado": 1.35,
-    };
-    return m[name] ?? 1.0;
-  }
-  materialBase(name) {
-    const m = {
-      "Madeira / MDF": 8, "Acrílico": 14, "Couro": 10,
-      "Plástico": 7, "Papel / papelão": 4, "Metal anodizado": 18,
-    };
-    return m[name] ?? 8;
-  }
-  complexityMult(c) { return c === "baixa" ? 0.7 : c === "alta" ? 1.6 : 1.0; }
-  serviceMult(s) { return s === "corte" ? 1.25 : s === "personalizado" ? 1.4 : s === "foto" ? 2.3 : 1.0; }
-
-  compute() {
-    const w = Math.max(0, Number(this.state.widthCm) || 0);
-    const h = Math.max(0, Number(this.state.heightCm) || 0);
-    const qty = Math.max(1, Number(this.state.qty) || 1);
-    const area = w * h; // cm²
-    const rate = this.rate();
-    const setup = 30; // preparo/arquivo
-    // tempo estimado em minutos por peça
-    const minsPerPiece = 6 + area * 0.10 * this.complexityMult(this.state.complexity) * this.serviceMult(this.state.service);
-    const laborPerPiece = (minsPerPiece / 60) * rate;
-    const matPerPiece = this.materialBase(this.state.material) * this.materialFactor(this.state.material) * (1 + area / 600);
-    const perPiece = laborPerPiece + matPerPiece;
-    // economia de escala leve
-    const scale = qty > 1 ? 0.92 : 1;
-    const subtotal = setup + perPiece * qty * scale;
-    const total = Math.max(subtotal, 35); // mínimo
-    return {
-      total, setup,
-      labor: laborPerPiece * qty * scale,
-      material: matPerPiece * qty * scale,
-      mins: minsPerPiece * qty,
-    };
-  }
-
-  // ---------- segurança / sanitização ----------
-  // Remove caracteres invisíveis (zero-width, override de direção de texto -
-  // usados em golpes de "texto que trava o WhatsApp"), caracteres de controle
-  // e sequências de acentos empilhados ("zalgo"), além de limitar repetição
-  // e tamanho. Roda em todo texto digitado pelo cliente antes de virar
-  // mensagem no WhatsApp. Ver README.md, seção "Segurança".
-  getExt(name) {
-    const m = /\.([a-z0-9]+)$/i.exec(name || "");
-    return m ? m[1].toLowerCase() : "";
-  }
-  sanitizeText(str, maxLen) {
-    if (!str) return "";
-    const s = String(str)
-      .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, "") // zero-width / bidi override
-      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "") // caracteres de controle (mantem \n \t)
-      .replace(/[\u0300-\u036F]{3,}/g, "") // pilhas de acento combinavel ("zalgo")
-      .replace(/(.)\1{9,}/g, "$1$1$1") // colapsa 10+ repeticoes do mesmo caractere
-      .replace(/\n{4,}/g, "\n\n\n"); // limita linhas em branco seguidas
-    return s.slice(0, maxLen);
-  }
-
-  // ---------- handlers ----------
-  setNum(key) { return (e) => this.setState({ [key]: e.target.value }); }
-  setWidth = this.setNum("widthCm");
-  setHeight = this.setNum("heightCm");
-  setQty = this.setNum("qty");
-  setName = (e) => this.setState({ custName: this.sanitizeText(e.target.value, 80) });
-  setContact = (e) => this.setState({ custContact: this.sanitizeText(e.target.value, 60) });
-  setNotes = (e) => this.setState({ notes: this.sanitizeText(e.target.value, 500) });
-  setMaterial = (e) => this.setState({ material: e.target.value });
-
-  pickFile = () => { if (this.fileRef.current) this.fileRef.current.click(); };
-  handleFile = (file) => {
-    if (!file) return;
-    if (file.size > MAX_FILE_MB * 1024 * 1024) {
-      this.setState({ fileErr: "Arquivo maior que " + MAX_FILE_MB + "MB — envie um arquivo menor ou mande direto pelo WhatsApp.", imgPreview: "", fileName: "", fileUrl: "", uploading: false, upErr: false });
-      return;
-    }
-    const ext = this.getExt(file.name);
-    const isImg = /^image\//.test(file.type) && ALLOWED_IMG_EXT.includes(ext);
-    const isVector = ALLOWED_VECTOR_EXT.includes(ext);
-    if (DANGEROUS_EXT.has(ext) || (!isImg && !isVector)) {
-      this.setState({ fileErr: "Tipo de arquivo não aceito. Envie DXF, SVG, AI, PDF, PNG, JPG ou WEBP.", imgPreview: "", fileName: "", fileUrl: "", uploading: false, upErr: false });
-      return;
-    }
-    this.setState({ fileErr: "" });
-    if (isImg) {
-      const r = new FileReader();
-      r.onload = () => this.setState({ imgPreview: r.result, fileName: file.name });
-      r.readAsDataURL(file);
-      this.uploadImage(file); // sobe a foto e gera o link que vai no WhatsApp
-    } else {
-      this.setState({ imgPreview: "", fileName: file.name, fileUrl: "", uploading: false, upErr: false });
-    }
-  };
-
-  // Reduz a foto antes de subir (mais rápido no 4G do cliente) e devolve base64 puro
-  shrinkImage = (file) => new Promise((resolve) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      const MAX = 1600;
-      let w = img.width, h = img.height;
-      if (Math.max(w, h) > MAX) { const k = MAX / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
-      const cv = document.createElement("canvas");
-      cv.width = w; cv.height = h;
-      cv.getContext("2d").drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
-      resolve(cv.toDataURL("image/jpeg", 0.85).split(",")[1]);
-    };
-    img.onerror = () => { // formato que o canvas não lê: manda o arquivo original
-      URL.revokeObjectURL(url);
-      const r = new FileReader();
-      r.onload = () => resolve(String(r.result).split(",")[1]);
-      r.onerror = () => resolve(null);
-      r.readAsDataURL(file);
-    };
-    img.src = url;
-  });
-
-  uploadImage = async (file) => {
-    if (!IMGBB_KEY) return; // sem chave: segue o fluxo antigo
-    this.setState({ uploading: true, fileUrl: "", upErr: false });
-    try {
-      const b64 = await this.shrinkImage(file);
-      if (!b64) throw new Error("leitura");
-      const fd = new FormData();
-      fd.append("image", b64);
-      // expiration = 15552000s (180 dias): a foto do cliente se apaga sozinha do servidor
-      const res = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_KEY + "&expiration=15552000", { method: "POST", body: fd });
-      const j = await res.json();
-      if (j && j.success && j.data && j.data.url) {
-        this.setState({ fileUrl: j.data.url, uploading: false });
-      } else {
-        this.setState({ uploading: false, upErr: true });
-      }
-    } catch (e) {
-      this.setState({ uploading: false, upErr: true });
-    }
-  };
-  onFileInput = (e) => this.handleFile(e.target.files && e.target.files[0]);
-  onDragOver = (e) => { e.preventDefault(); this.setState({ dragging: true }); };
-  onDragLeave = (e) => { e.preventDefault(); this.setState({ dragging: false }); };
-  onDrop = (e) => {
-    e.preventDefault();
-    this.setState({ dragging: false });
-    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    this.handleFile(f);
-  };
-
-  waNumber() {
-    let n = String(this.props.whatsapp ?? "").replace(/\D/g, "");
-    // número brasileiro sem o 55? adiciona (senão o wa.me manda pro país errado)
-    if (n.length === 10 || n.length === 11) n = "55" + n;
-    return n || "5511912130716";
-  }
-
-  submitWhatsApp = () => {
-    const c = this.compute();
-    if (this.state.uploading) {
-      alert("A foto ainda está subindo... aguarde uns segundos e toque em ENVIAR de novo.");
-      return;
-    }
-    const st = this.state;
-    const fileLine = st.fileUrl
-      ? "Arquivo: " + st.fileName + " (foto no link abaixo)"
-      : "Arquivo: " + (st.fileName ? st.fileName + " — vou anexar aqui na conversa" : "(vou enviar em seguida)");
-    const lines = [
-      "*NOVO PEDIDO DE ORÇAMENTO*",
-      "",
-      "Nome: " + (this.state.custName || "—"),
-      "Contato: " + (this.state.custContact || "—"),
-      "Serviço: " + this.serviceLabel(this.state.service),
-      "Material: " + this.state.material,
-      "Tamanho: " + this.state.widthCm + " x " + this.state.heightCm + " cm",
-      "Quantidade: " + this.state.qty,
-      "Complexidade: " + this.state.complexity,
-      fileLine,
-      st.fileUrl ? "Foto: " + st.fileUrl : "",
-      "",
-      "Estimativa do site: " + this.brl(c.total * 0.85) + " – " + this.brl(c.total * 1.15),
-      this.state.notes ? ("Obs: " + this.state.notes) : "",
-    ].filter(Boolean);
-    // sanitização final defensiva + limite de tamanho total da mensagem
-    const msg = this.sanitizeText(lines.join("\n"), 1500);
-    const url = "https://wa.me/" + this.waNumber() + "?text=" + encodeURIComponent(msg);
-    window.open(url, "_blank");
-  };
-
-  serviceLabel(s) {
-    return s === "corte" ? "Corte a laser" : s === "personalizado" ? "Personalizado / brinde" : s === "foto" ? "Gravação de foto/imagem" : "Gravação a laser";
-  }
-
-  toggleFaq(i) { return () => this.setState({ faqOpen: this.state.faqOpen === i ? -1 : i }); }
-
-  renderVals() {
-    const s = this.state;
-    const c = this.compute();
-    const rate = this.rate();
-    const yellow = "#fcee0a", dim = "#8a8a99";
-
-    const mk = (active) => active
-      ? { bg: "#fcee0a", fg: "#07070a", bd: "#fcee0a" }
-      : { bg: "#07070a", fg: "#b8b8c4", bd: "rgba(252,238,10,.3)" };
-
-    const serviceOpts = [
-      { key: "gravacao", label: "Gravação" },
-      { key: "corte", label: "Corte" },
-      { key: "foto", label: "Foto/Imagem" },
-      { key: "personalizado", label: "Personalizado" },
-    ].map(o => ({ label: o.label, ...mk(s.service === o.key), select: () => this.setState({ service: o.key }) }));
-
-    const complexityOpts = [
-      { key: "baixa", label: "Baixa" },
-      { key: "media", label: "Média" },
-      { key: "alta", label: "Alta" },
-    ].map(o => ({ label: o.label, ...mk(s.complexity === o.key), select: () => this.setState({ complexity: o.key }) }));
-
-    const materialNames = ["Madeira / MDF", "Acrílico", "Couro", "Plástico", "Papel / papelão", "Metal anodizado"];
-
-    const materials = [
-      { name: "Madeira / MDF", icon: "▣", engrave: "a partir R$15", cut: "a partir R$25", note: "Ótimo contraste e acabamento" },
-      { name: "Acrílico", icon: "◈", engrave: "a partir R$20", cut: "a partir R$35", note: "Corte com borda polida" },
-      { name: "Couro", icon: "❖", engrave: "a partir R$18", cut: "—", note: "Brindes e personalização" },
-      { name: "Plástico", icon: "▤", engrave: "a partir R$14", cut: "a partir R$22", note: "Tags e placas" },
-      { name: "Papel / papelão", icon: "▥", engrave: "a partir R$10", cut: "a partir R$16", note: "Convites e embalagens" },
-      { name: "Metal anodizado", icon: "◆", engrave: "a partir R$28", cut: "—", note: "Gravação permanente" },
-    ].map((m, i) => ({ ...m, rowBg: i % 2 ? "rgba(255,255,255,.015)" : "transparent" }));
-
-    const gallery = [
-      { id: "work1", label: "Trabalho 01", tag: "MADEIRA / GRAVAÇÃO", src: "images/work1.jpg" },
-      { id: "work2", label: "Trabalho 02", tag: "ACRÍLICO / CORTE", src: "images/work2.jpg" },
-      { id: "work3", label: "Trabalho 03", tag: "COURO / BRINDE", src: "images/work3.jpg" },
-      { id: "work4", label: "Trabalho 04", tag: "METAL / TAG", src: "images/work4.jpg" },
-      { id: "work5", label: "Trabalho 05", tag: "MDF / DECORAÇÃO", src: "images/work5.jpg" },
-      { id: "work6", label: "Trabalho 06", tag: "PERSONALIZADO", src: "images/work6.jpg" },
-    ];
-
-    const ideas = [
-      { icon: "🔑", title: "Chaveiros em couro", desc: "Brindes personalizados para eventos, casamentos ou presentes de empresa." },
-      { icon: "🖼", title: "Quadros decorativos em MDF", desc: "Frases, mapas de constelação, logotipos ou plantas baixas de casas." },
-      { icon: "🐾", title: "Placas de identificação", desc: "Plaquinhas para pets, escritórios, portas e endereços residenciais." },
-      { icon: "💌", title: "Convites e cartões gravados", desc: "Casamentos, formaturas e eventos com um acabamento que ninguém esquece." },
-      { icon: "🎁", title: "Brindes corporativos", desc: "Porta-copos, réguas e chaveiros com o logo da sua empresa." },
-      { icon: "🏷", title: "Tags para produtos artesanais", desc: "Etiquetas em couro ou MDF para moda, cosméticos e alimentos." },
-    ];
-
-    const testimonials = [
-      { name: "Camila S.", quote: "Mandei uma foto da minha cachorra e o resultado gravado no MDF ficou impressionante — todo mundo pergunta onde eu fiz." },
-      { name: "Rafael M.", quote: "Pedi chaveiros de couro personalizados para um evento da empresa. Chegaram rápido e com um acabamento incrível." },
-      { name: "Juliana T.", quote: "Nunca tinha usado um serviço de gravação a laser. O atendimento pelo WhatsApp facilitou muito do início ao fim." },
-      { name: "André L.", quote: "A placa que fiz para o consultório ficou ótima — o detalhe da gravação em acrílico surpreendeu todo mundo." },
-      { name: "Bianca F.", quote: "Comprei uma tábua personalizada de presente de casamento. Entrega rápida e um capricho danado no acabamento." },
-    ];
-
-    const faqData = [
-      { q: "Quais arquivos vocês aceitam?", a: "Aceitamos DXF, SVG, AI e PDF (vetores, ideais para corte) e PNG/JPG/WEBP em alta resolução (para gravação de imagens e fotos). Outros formatos, incluindo executáveis e scripts, são bloqueados automaticamente." },
-      { q: "Como eu envio meu arquivo?", a: "Fotos e imagens (JPG/PNG/WEBP) você pode enviar aqui mesmo no site — o upload é automático e o link já vai junto no seu pedido do WhatsApp. Arquivos vetoriais (DXF, SVG, AI, PDF) são combinados e enviados diretamente na conversa do WhatsApp depois que o orçamento é fechado." },
-      { q: "Por que gravar uma foto custa mais que um desenho vetorial?", a: "Fotos e imagens fotográficas exigem tratamento em meio-tom e muito mais linhas de gravação para reproduzir os tons de cinza, o que aumenta bastante o tempo de máquina. Por isso a opção \"Foto/Imagem\" tem um valor diferenciado — o resultado compensa, com profundidade e riqueza de detalhes." },
-      { q: "Como é calculado o preço?", a: "O valor combina o tempo de máquina (R$" + rate + "/hora), o material, o tamanho da peça, a complexidade do desenho, o tipo de serviço e a quantidade. A estimativa do site é uma faixa de partida — o valor final é confirmado por mim antes de iniciar." },
-      { q: "Qual o tamanho máximo de gravação?", a: "A ACMER S1 grava e corta em uma área de até 130 x 130 mm. Para peças maiores, falamos sobre dividir o trabalho em partes." },
-      { q: "Qual o prazo de entrega?", a: "Pedidos simples costumam ficar prontos em 2 a 4 dias úteis. Volumes maiores ou alta complexidade podem levar mais — combinamos o prazo no orçamento." },
-      { q: "Vocês entregam ou é só retirada?", a: "Trabalhamos com retirada e também envio por transportadora/correios. O frete é calculado à parte conforme o destino." },
-      { q: "Como vocês cuidam da segurança dos arquivos enviados?", a: "O site só aceita os formatos DXF, SVG, AI, PDF, PNG, JPG e WEBP, até 25MB — qualquer outro tipo (executáveis, scripts, etc.) é bloqueado automaticamente. Ainda assim, por segurança, não abrimos arquivos ou links de origem desconhecida sem antes confirmar com quem enviou. Evite compartilhar links de sites que você não conhece nas observações do pedido." },
-    ];
-    const faqs = faqData.map((f, i) => ({
-      ...f,
-      open: s.faqOpen === i,
-      sign: s.faqOpen === i ? "−" : "+",
-      bd: s.faqOpen === i ? "rgba(252,238,10,.5)" : "rgba(252,238,10,.15)",
-      toggle: this.toggleFaq(i),
-    }));
-
-    const wa = this.waNumber();
-
-    return {
-      brandName: this.props.brandName ?? "ACMER S1",
-      heroLine1: "GRAVAÇÃO",
-      heroLine2: "A LASER",
-      heroSub: "Gravação e corte de precisão na ACMER S1. Envie seu arquivo DXF, vetor ou foto, informe o tamanho e receba um orçamento rápido — madeira, MDF, acrílico, couro, metal e brindes personalizados.",
-      marqueeText: "  ★  GRAVAÇÃO A LASER  ★  CORTE DE PRECISÃO  ★  FOTOS EM MDF E COURO  ★  BRINDES PERSONALIZADOS  ★  ACMER S1 // 2,5W  ★  ORÇAMENTO RÁPIDO  ",
-      stats: [
-        { v: "2,5W", k: "POTÊNCIA ÓPTICA" },
-        { v: "130×130", k: "ÁREA DE TRABALHO (MM)" },
-        { v: "R$" + rate, k: "VALOR / HORA" },
-      ],
-      machineDesc: "Laser diodo de 2,5W ópticos com ponto fino para detalhes precisos. Grava madeira, MDF, couro, papel, acrílico escuro e metal anodizado; corta papel, couro e materiais finos em múltiplas passadas. Repetibilidade de 0,01 mm — ideal para brindes, tags e personalização.",
-      specs: [
-        { k: "LASER", v: "Diodo 2,5W óptico" },
-        { k: "ÁREA", v: "130 × 130 mm" },
-        { k: "PRECISÃO", v: "0,01 mm" },
-        { k: "VELOCIDADE", v: "até 10.000 mm/min" },
-      ],
-
-      ideas,
-
-      // form
-      widthCm: s.widthCm, heightCm: s.heightCm, qty: s.qty,
-      material: s.material, materialNames,
-      custName: s.custName, custContact: s.custContact, notes: s.notes,
-      setWidth: this.setWidth, setHeight: this.setHeight, setQty: this.setQty,
-      setName: this.setName, setContact: this.setContact, setNotes: this.setNotes,
-      setMaterial: this.setMaterial,
-      serviceOpts, complexityOpts,
-      isFotoService: s.service === "foto",
-      pickFile: this.pickFile, fileRef: this.fileRef, onFileInput: this.onFileInput,
-      onDragOver: this.onDragOver, onDragLeave: this.onDragLeave, onDrop: this.onDrop,
-      submitWhatsApp: this.submitWhatsApp,
-      fileErr: s.fileErr,
-      submitHint: s.uploading
-        ? "Subindo sua foto... assim que terminar, o link dela vai junto no pedido."
-        : (s.fileUrl
-          ? "Abre o WhatsApp com o pedido preenchido — o link da sua foto já vai no texto."
-          : (s.upErr
-            ? "Não consegui subir a foto agora — sem problema: envie o pedido e anexe a foto na conversa."
-            : "Abre o WhatsApp com o pedido preenchido. Vetores (DXF/SVG/AI/PDF) são anexados na conversa.")),
-
-      previewImg: s.imgPreview ? React.createElement("img", { src: s.imgPreview, alt: "preview", style: { maxHeight: "150px", maxWidth: "100%", margin: "0 auto 12px", display: "block", border: "1px solid rgba(252,238,10,.3)" } }) : null,
-      dropBorder: s.dragging ? "#fcee0a" : (s.fileName ? "rgba(0,229,255,.6)" : "rgba(252,238,10,.4)"),
-      dropBg: s.dragging ? "rgba(252,238,10,.08)" : "rgba(252,238,10,.02)",
-      dropIcon: s.uploading ? "⇡" : (s.fileName ? "✓" : "⇪"),
-      dropTitle: s.uploading
-        ? s.fileName + " · SUBINDO FOTO..."
-        : (s.fileUrl ? s.fileName + " · ✓ LINK PRONTO" : (s.fileName ? s.fileName : "Arraste o arquivo ou clique para enviar")),
-
-      // estimate
-      estLow: this.brl(c.total * 0.85),
-      estHigh: this.brl(c.total * 1.15),
-      rateLabel: "R$" + rate + "/h",
-      breakdown: [
-        { k: "Preparo / arquivo", v: this.brl(c.setup) },
-        { k: "Tempo de máquina (~" + Math.round(c.mins) + " min)", v: this.brl(c.labor) },
-        { k: "Material × " + s.qty, v: this.brl(c.material) },
-        { k: "Tamanho", v: s.widthCm + "×" + s.heightCm + " cm" },
-      ],
-      estimateNote: "* Estimativa automática para referência. O valor final é confirmado antes de iniciar a produção.",
-      trustBadges: [
-        { icon: "⚡", label: "Resposta rápida" },
-        { icon: "◎", label: "Precisão 0,01mm" },
-        { icon: "✦", label: "Acabamento premium" },
-      ],
-
-      materials, gallery, testimonials, faqs,
-
-      founderBio: "Sou o Fernando, fundador e CEO da " + (this.props.brandName ?? "ACMER S1") + ". Comecei a estudar gravação e corte a laser por paixão em transformar ideias simples em peças reais — hoje coloco essa mesma dedicação em cada pedido que chega até mim. Cuido pessoalmente de cada etapa, do primeiro contato no WhatsApp até a entrega, para garantir o acabamento e a precisão que eu mesmo esperaria receber.",
-
-      footerBlurb: "Gravação e corte a laser de precisão com a ACMER S1. Peças únicas, brindes corporativos e produção sob medida, com atenção aos detalhes em cada trabalho.",
-      waLink: "https://wa.me/" + wa,
-      igLink: this.props.instagram ?? "https://www.instagram.com/_fernando.dr/",
-      mailLink: "mailto:" + (this.props.email ?? "fernandoxjc@icloud.com"),
-      year: 2026,
-    };
-  }
-}
-</script>
+  <!-- ============================ SCRIPTS ============================ -->
+  <script src="js/config.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/gallery.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
