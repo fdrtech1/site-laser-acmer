@@ -361,6 +361,9 @@
   </div>
 
   <!-- ============================ SCRIPTS ============================ -->
+  <!-- js/secrets.js é local, não versionado (ver .gitignore) — sem ele, o
+       upload automático de foto fica desativado e o pedido segue mesmo assim. -->
+  <script src="js/secrets.js" onerror="console.warn('js/secrets.js ausente — upload de foto desativado.')"></script>
   <script src="js/config.js"></script>
   <script src="js/effects.js"></script>
   <script src="js/calculator.js"></script>

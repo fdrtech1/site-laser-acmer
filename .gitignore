@@ -1,1 +1,8 @@
 .claude/
+js/secrets.js
+*.bak
+*.lock
+.env
+*.tmp
+.vscode/
+

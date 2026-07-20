@@ -1,0 +1,11 @@
+{
+  "_comentario": "Catálogo exibido na seção #catalogo. 'precoDesde' é o preço 'a partir de' por peça (null = sob consulta).",
+  "produtos": [
+    { "id": "p1", "nome": "Gravação em Madeira / MDF", "material": "Madeira / MDF", "descricao": "Placas, quadros decorativos e presentes com gravação detalhada.", "imagem": "images/work1.jpg", "precoDesde": 15, "unidade": "gravação" },
+    { "id": "p2", "nome": "Corte em Acrílico", "material": "Acrílico", "descricao": "Peças recortadas com borda polida — displays, letreiros e formas personalizadas.", "imagem": "images/work2.jpg", "precoDesde": 35, "unidade": "corte" },
+    { "id": "p3", "nome": "Brindes em Couro", "material": "Couro", "descricao": "Chaveiros, tags e patches personalizados para eventos e empresas.", "imagem": "images/work3.jpg", "precoDesde": 18, "unidade": "gravação" },
+    { "id": "p4", "nome": "Tags em Metal Anodizado", "material": "Metal anodizado", "descricao": "Identificação permanente e resistente para equipamentos e produtos.", "imagem": "images/work4.jpg", "precoDesde": 28, "unidade": "gravação" },
+    { "id": "p5", "nome": "Decoração em MDF", "material": "Madeira / MDF", "descricao": "Itens decorativos e chaveiros em lote para casa ou negócio.", "imagem": "images/work5.jpg", "precoDesde": 15, "unidade": "gravação" },
+    { "id": "p6", "nome": "Peças Personalizadas", "material": "Personalizado", "descricao": "Do desenho à peça final — conte sua ideia e a gente calcula.", "imagem": "images/work6.jpg", "precoDesde": null, "unidade": "sob consulta" }
+  ]
+}
