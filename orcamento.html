@@ -234,8 +234,10 @@
 
   <!-- ============================ SCRIPTS ============================ -->
   <!-- js/secrets.js é local, não versionado (ver .gitignore) — sem ele, o
-       upload automático de foto fica desativado e o pedido segue mesmo assim. -->
-  <script src="js/secrets.js" onerror="console.warn('js/secrets.js ausente — upload de foto desativado.')"></script>
+       upload automático de foto fica desativado e o pedido segue mesmo assim.
+       Sem onerror inline: a CSP (script-src 'self') bloqueia handler inline
+       mesmo, então um 404 dele é só o esperado (ver console, é 1 aviso). -->
+  <script src="js/secrets.js"></script>
   <script src="js/config.js"></script>
   <script src="js/effects.js"></script>
   <script src="js/nav.js"></script>
