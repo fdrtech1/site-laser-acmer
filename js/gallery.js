@@ -8,11 +8,14 @@
   var trabalhos = [];
   var current = -1;
 
+  function webpOf(path) { return path.replace(/\.(jpe?g|png)$/i, ".webp"); }
+
   function item(t, i) {
     var el = document.createElement("div");
     el.className = "g-item";
     el.innerHTML =
-      '<img src="' + t.imagem + '" alt="' + t.legenda + '" loading="lazy">' +
+      '<picture><source type="image/webp" srcset="' + webpOf(t.imagem) + '">' +
+      '<img src="' + t.imagem + '" alt="' + t.legenda + '" loading="lazy"></picture>' +
       '<div class="g-cap"><div>' + t.legenda + '</div><div class="mat">' + t.material + '</div></div>';
     el.addEventListener("click", function () { openLightbox(i); });
     return el;

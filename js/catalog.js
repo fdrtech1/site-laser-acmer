@@ -4,6 +4,8 @@
 (function () {
   "use strict";
 
+  function webpOf(path) { return path.replace(/\.(jpe?g|png)$/i, ".webp"); }
+
   function card(p) {
     var el = document.createElement("div");
     el.className = "produto";
@@ -11,7 +13,8 @@
       ? "Sob consulta"
       : "R$" + p.precoDesde + " <small>a partir de, " + p.unidade + "</small>";
     el.innerHTML =
-      '<div class="thumb"><img src="' + p.imagem + '" alt="' + p.nome + '" loading="lazy">' +
+      '<div class="thumb"><picture><source type="image/webp" srcset="' + webpOf(p.imagem) + '">' +
+      '<img src="' + p.imagem + '" alt="' + p.nome + '" loading="lazy"></picture>' +
       '<span class="tag-mat">' + p.material + '</span></div>' +
       '<div class="body"><h3>' + p.nome + '</h3>' +
       '<p class="desc">' + p.descricao + '</p>' +
@@ -26,6 +29,7 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         (data.produtos || []).forEach(function (p) { grid.appendChild(card(p)); });
+        document.dispatchEvent(new CustomEvent("catalog:loaded"));
       })
       .catch(function (e) { console.warn("Não foi possível carregar o catálogo:", e); });
   });
