@@ -1,5 +1,6 @@
 /* =============================================================================
-   EFFECTS.JS — revelação no scroll, menu mobile e fundo estrelado (canvas).
+   EFFECTS.JS — revelação no scroll, parallax e fundo estrelado (canvas).
+   Menu mobile e link ativo do menu ficam em js/nav.js.
    ============================================================================= */
 (function () {
   "use strict";
@@ -25,17 +26,30 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- menu mobile ---------- */
-  function initNavToggle() {
-    var toggle = document.querySelector(".nav-toggle");
-    var links = document.querySelector(".nav-links");
-    if (!toggle || !links) return;
-    toggle.addEventListener("click", function () {
-      links.classList.toggle("open");
-    });
-    links.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () { links.classList.remove("open"); });
-    });
+  /* ---------- parallax no scroll ---------- */
+  function initParallax() {
+    var els = document.querySelectorAll("[data-parallax]");
+    if (!els.length || reduceMotion) return;
+    var ticking = false;
+
+    function apply() {
+      var vh = window.innerHeight;
+      els.forEach(function (el) {
+        var speed = parseFloat(el.getAttribute("data-parallax")) || 0.15;
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2 - vh / 2;
+        el.style.transform = "translateY(" + (center * -speed).toFixed(1) + "px)";
+      });
+      ticking = false;
+    }
+
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    }, { passive: true });
+    window.addEventListener("resize", function () { requestAnimationFrame(apply); });
+    apply();
   }
 
   /* ---------- fundo estrelado no #space-canvas ---------- */
@@ -86,7 +100,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initReveal();
-    initNavToggle();
+    initParallax();
     initStarfield();
   });
 })();
