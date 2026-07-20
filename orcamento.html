@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       SEGURANÇA — Content Security Policy (CSP) via meta tag.
+       Permite só o necessário: scripts próprios, fontes do Google,
+       upload de imagem no imgbb e imagens https (links do imgbb).
+       ============================================================ -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data: https:;
+    connect-src 'self' https://api.imgbb.com;
+    form-action 'self' https://wa.me;
+    base-uri 'self';
+    object-src 'none';
+  ">
+  <meta name="referrer" content="no-referrer">
+
+  <title>Orçamento de gravação a laser na hora — ACMER S1</title>
+  <meta name="description" content="Monte seu orçamento de gravação ou corte a laser: escolha material, tamanho e quantidade e veja a estimativa em tempo real. Confirme pelo WhatsApp, sem compromisso.">
+  <link rel="canonical" href="https://fdrtech1.github.io/site-laser-acmer/orcamento.html">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#05060d">
+  <link rel="apple-touch-icon" href="images/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ACMER S1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <canvas id="space-canvas" aria-hidden="true"></canvas>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span data-brand>ACMER S1</span>
+      </a>
+      <nav class="nav-links" aria-label="Menu principal">
+        <a href="index.html">Início</a>
+        <a href="o-problema.html">Por que gravar</a>
+        <a href="como-funciona.html">Como funciona</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="galeria.html">Galeria</a>
+        <a href="orcamento.html">Orçamento</a>
+        <a class="btn btn-whats" data-wa-link data-wa-msg="Olá! Vim pelo site e quero um orçamento de gravação a laser.">WhatsApp</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Abrir menu">☰</button>
+    </div>
+  </header>
+
+  <!-- ============================ CABEÇALHO DA PÁGINA ============================ -->
+  <section class="page-head" style="padding-bottom:20px">
+    <div class="container">
+      <span class="section-eyebrow reveal">Orçamento na hora</span>
+      <h1 class="reveal">Monte seu orçamento agora mesmo</h1>
+      <p class="lead reveal">Estimativa em tempo real. O valor final é confirmado com você no WhatsApp, sem compromisso — se não fechar, tudo bem.</p>
+    </div>
+  </section>
+
+  <!-- ============================ CALCULADORA + FORMULÁRIO ============================ -->
+  <section id="orcamento" style="padding-top:20px">
+    <div class="container">
+      <div class="calc-wrap reveal">
+        <!-- COLUNA 1: campos -->
+        <div class="panel">
+          <div class="field">
+            <label for="calc-material">Material</label>
+            <select id="calc-material">
+              <option>Madeira / MDF</option>
+              <option>Alumínio anodizado</option>
+              <option>EVA</option>
+              <option>Acrílico</option>
+              <option>Couro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="calc-servico">Tipo de serviço</label>
+            <select id="calc-servico">
+              <option value="gravacao">Gravação a laser</option>
+              <option value="corte">Corte a laser</option>
+              <option value="foto">Gravação de foto/imagem</option>
+              <option value="personalizado">Personalizado / brinde</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tamanho da gravação (mm)</label>
+            <div class="row2">
+              <input id="calc-largura" type="number" min="1" max="130" value="100" inputmode="numeric" aria-label="Largura em mm">
+              <input id="calc-altura" type="number" min="1" max="130" value="100" inputmode="numeric" aria-label="Altura em mm">
+            </div>
+            <p class="status" style="color:var(--ink-dim);font-size:12px;margin-top:6px">Máx. 130 × 130 mm (área da máquina).</p>
+          </div>
+          <div class="field">
+            <label for="calc-complexidade">Complexidade do desenho</label>
+            <select id="calc-complexidade">
+              <option value="baixa">Baixa (texto / formas simples)</option>
+              <option value="media" selected>Média (logo / detalhes)</option>
+              <option value="alta">Alta (muitos detalhes finos)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="calc-qtd">Quantidade (peças)</label>
+            <input id="calc-qtd" type="number" min="1" value="1" inputmode="numeric">
+          </div>
+          <div class="field field-check">
+            <input id="calc-arte" type="checkbox">
+            <label for="calc-arte" style="margin:0;text-transform:none;letter-spacing:0;font-family:var(--font-body);font-size:15px;color:var(--ink)">Vou mandar uma imagem para vetorizar (taxa única de arte)</label>
+          </div>
+        </div>
+
+        <!-- COLUNA 2: resultado + formulário -->
+        <div class="calc-result">
+          <div class="result-box">
+            <div class="r-label">ESTIMATIVA</div>
+            <div class="r-price" id="r-price">R$ 0</div>
+            <div class="r-range" id="r-range"></div>
+            <span class="badge-lote" id="badge-lote" style="display:none"></span>
+            <div class="result-breakdown">
+              <div class="rb"><span>Por peça</span><b id="rb-peca">R$ 0</b></div>
+              <div class="rb"><span>Quantidade</span><b id="rb-qtd">1x</b></div>
+              <div class="rb"><span>Subtotal peças</span><b id="rb-subtotal">R$ 0</b></div>
+              <div class="rb" id="rb-desc-row" style="display:none"><span>Desconto de lote</span><b id="rb-desc" style="color:var(--laser-cyan)">—</b></div>
+              <div class="rb"><span>Taxa de arte</span><b id="rb-arte">—</b></div>
+            </div>
+            <p class="status" style="color:var(--ink-dim);font-size:12px;margin-top:14px">Estimativa automática. O valor final é confirmado no WhatsApp de acordo com o material e o arquivo.</p>
+          </div>
+
+          <!-- FORMULÁRIO DE ENVIO -->
+          <div class="panel" style="margin-top:18px">
+            <div class="field">
+              <label for="form-nome">Seu nome</label>
+              <input id="form-nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos te chamar">
+            </div>
+            <div class="field">
+              <label for="form-contato">WhatsApp ou e-mail</label>
+              <input id="form-contato" type="text" maxlength="60" placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="field">
+              <label>Arquivo (opcional)</label>
+              <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Enviar arquivo">
+                <div>📎 Toque ou arraste um arquivo aqui</div>
+                <div style="font-size:12px;margin-top:6px">PNG, JPG, WEBP, PDF, SVG, DXF, AI — até 25MB</div>
+                <img class="preview" id="upload-preview" alt="Pré-visualização" style="display:none">
+                <div class="status" id="upload-status"></div>
+              </div>
+              <input id="file-input" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf,.svg,.dxf,.ai,image/png,image/jpeg,image/webp,application/pdf" hidden>
+              <div class="msg-err" id="file-err"></div>
+            </div>
+
+            <div class="hint">
+              <b>COMO FUNCIONA O ENVIO:</b> fotos e imagens (PNG/JPG/WEBP) sobem automaticamente e o link já vai no seu pedido. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados direto na conversa do WhatsApp. Por segurança, arquivos executáveis ou de script não são aceitos.
+            </div>
+
+            <div class="field">
+              <label for="form-obs">Observações</label>
+              <textarea id="form-obs" rows="3" maxlength="500" placeholder="Detalhes do que você quer gravar/cortar"></textarea>
+            </div>
+
+            <button class="btn btn-whats" id="btn-enviar" style="width:100%">ENVIAR PEDIDO VIA WHATSAPP ▸</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- ============================ FAQ ============================ -->
+  <section id="faq">
+    <div class="container" style="max-width:800px">
+      <span class="section-eyebrow reveal">Dúvidas</span>
+      <h2 class="section-title reveal">Perguntas <span class="accent">frequentes</span></h2>
+      <div style="margin-top:28px">
+        <div class="faq-item reveal"><button class="faq-q">Como eu envio meu arquivo?<span class="plus">+</span></button><div class="faq-a"><p>Fotos e imagens (JPG/PNG/WEBP) você envia aqui mesmo no site — o upload é automático e o link já vai junto no seu pedido do WhatsApp. Arquivos vetoriais (DXF, SVG, AI, PDF) são enviados diretamente na conversa do WhatsApp depois que o orçamento é fechado.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">Quais materiais vocês gravam?<span class="plus">+</span></button><div class="faq-a"><p>Madeira/MDF, alumínio anodizado, EVA, acrílico e couro. Se tiver dúvida sobre um material específico, é só perguntar no WhatsApp.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">Qual o tamanho máximo da peça?<span class="plus">+</span></button><div class="faq-a"><p>A área útil da máquina é de 130 × 130 mm. Peças maiores podem ser feitas em partes — fale com a gente.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">Vocês fazem pedidos em lote?<span class="plus">+</span></button><div class="faq-a"><p>Sim! Quanto maior a quantidade, maior o desconto. Use a calculadora com a quantidade real para ver a estimativa com desconto de lote.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">A estimativa do site é o preço final?<span class="plus">+</span></button><div class="faq-a"><p>É uma estimativa automática para você ter uma ideia. O valor final é confirmado no WhatsApp conforme o material, o arquivo e os detalhes do pedido.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-q">E se eu mandar o pedido e desistir?<span class="plus">+</span></button><div class="faq-a"><p>Sem problema nenhum. O envio pelo WhatsApp não é uma compra fechada — é só o início da conversa para confirmar os detalhes antes de qualquer produção.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer>
+    <div class="container">
+      <div class="foot-grid">
+        <div>
+          <div class="brand" style="margin-bottom:12px"><span class="logo-mark" aria-hidden="true"></span><span data-brand>ACMER S1</span></div>
+          <p style="color:var(--ink-dim);font-size:15px" data-slogan>Gravação e corte a laser de precisão</p>
+          <p style="color:var(--ink-dim);font-size:14px;margin-top:6px" data-cidade>Capelinha — MG</p>
+        </div>
+        <div>
+          <h3 style="font-size:15px;margin-bottom:8px">Navegar</h3>
+          <a href="index.html">Início</a><a href="o-problema.html">Por que gravar</a><a href="como-funciona.html">Como funciona</a><a href="produtos.html">Produtos</a><a href="galeria.html">Galeria</a><a href="orcamento.html">Orçamento</a>
+        </div>
+        <div>
+          <h3 style="font-size:15px;margin-bottom:8px">Contato</h3>
+          <a data-wa-link data-wa-msg="Olá! Vim pelo site.">▸ WhatsApp</a>
+          <a data-insta>▸ Instagram</a>
+          <a data-email></a>
+        </div>
+      </div>
+      <div class="foot-bottom">© <span data-ano>2026</span> <span data-brand>ACMER S1</span> — Todos os direitos reservados. · R01</div>
+    </div>
+  </footer>
+
+  <!-- botão flutuante WhatsApp -->
+  <a class="fab-whats" data-wa-link data-wa-msg="Olá! Vim pelo site e quero um orçamento." aria-label="Falar no WhatsApp">✆</a>
+
+  <!-- toast instalar PWA -->
+  <div class="pwa-toast" id="pwa-toast">
+    <span>📲 Instale o app da <b data-brand>ACMER S1</b> no seu celular.</span>
+    <button id="pwa-install">Instalar</button>
+    <button class="x" id="pwa-close" aria-label="Fechar">✕</button>
+  </div>
+
+  <!-- ============================ SCRIPTS ============================ -->
+  <!-- js/secrets.js é local, não versionado (ver .gitignore) — sem ele, o
+       upload automático de foto fica desativado e o pedido segue mesmo assim. -->
+  <script src="js/secrets.js" onerror="console.warn('js/secrets.js ausente — upload de foto desativado.')"></script>
+  <script src="js/config.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
