@@ -3,9 +3,9 @@
   "trabalhos": [
     { "id": "g1", "imagem": "images/work1.jpg", "legenda": "Placa decorativa gravada", "material": "Madeira / MDF" },
     { "id": "g2", "imagem": "images/work2.jpg", "legenda": "Tag de identificação", "material": "Alumínio anodizado" },
-    { "id": "g3", "imagem": "images/work3.jpg", "legenda": "Molde recortado para artesanato", "material": "EVA" },
+    { "id": "g3", "imagem": "images/work3.jpg", "legenda": "Chaveiro personalizado em couro", "material": "Couro" },
     { "id": "g4", "imagem": "images/work4.jpg", "legenda": "Display personalizado", "material": "Acrílico" },
     { "id": "g5", "imagem": "images/work5.jpg", "legenda": "Chaveiros em lote", "material": "Madeira / MDF" },
-    { "id": "g6", "imagem": "images/work6.jpg", "legenda": "Gravação de foto em metal", "material": "Alumínio anodizado" }
+    { "id": "g6", "imagem": "images/work6.jpg", "legenda": "Chaveiro com desenho, logo ou frase", "material": "Madeira / MDF" }
   ]
 }

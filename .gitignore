@@ -5,4 +5,5 @@ js/secrets.js
 .env
 *.tmp
 .vscode/
+images/webp/
 
