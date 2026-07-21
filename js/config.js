@@ -4,7 +4,7 @@
 window.CONFIG = {
   marca: {
     nome: "ACMER S1",
-    slogan: "Gravação e corte a laser de precisão",
+    slogan: "Gravação a laser de precisão",
     cidade: "Capelinha — MG",
     whatsapp: "5511912130716",
     instagram: "https://www.instagram.com/_fernando.dr/",
@@ -32,7 +32,7 @@ window.CONFIG = {
       "Metal anodizado": { base: 18, fator: 1.35 },
     },
     complexidade: { baixa: 0.7, media: 1.0, alta: 1.6 },
-    servico: { gravacao: 1.0, corte: 1.25, foto: 2.3, personalizado: 1.4 },
+    servico: { gravacao: 1.0, foto: 2.3, personalizado: 1.4 },
     // desconto por volume, aplicado ao subtotal de peças (não ao setup)
     lote: [
       { min: 100, desconto: 0.30 },

@@ -1,7 +1,7 @@
 {
   "name": "ACMER S1 — Gravação a Laser",
   "short_name": "ACMER S1",
-  "description": "Gravação e corte a laser de precisão. Orçamento rápido pelo WhatsApp.",
+  "description": "Gravação a laser de precisão. Orçamento rápido pelo WhatsApp.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -16,7 +16,7 @@
     { "src": "images/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Calculadora de orçamento", "url": "./index.html#orcamento" },
+    { "name": "Calculadora de orçamento", "url": "./orcamento.html#orcamento" },
     { "name": "Pedidos em lote", "url": "./index.html#lote" }
   ]
 }

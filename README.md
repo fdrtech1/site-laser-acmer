@@ -1,16 +1,24 @@
 # Site Laser ACMER
 
-Vitrine e orçamento para gravação/corte a laser com a ACMER S1 (diodo 2,5W, área 130×130mm). Estático, sem backend, publicado via GitHub Pages.
+Vitrine e orçamento para gravação a laser com a ACMER S1 (diodo 2,5W, área 130×130mm — grava, não corta). Estático, sem backend, publicado via GitHub Pages.
 
 **Ao vivo:** https://fdrtech1.github.io/site-laser-acmer/
 
 ## Estrutura
 
 ```
-index.html              site publicado
-css/styles.css          estilos
+index.html              Home
+o-problema.html         por que gravar a laser em vez de improvisar
+como-funciona.html      passo a passo do pedido
+produtos.html           catálogo (renderiza data/catalogo.json)
+galeria.html            galeria de trabalhos (renderiza data/galeria.json)
+orcamento.html          calculadora + formulário + FAQ
+css/styles.css          estilos compartilhados
 js/config.js            marca, contato, preços, materiais
-js/effects.js           scroll reveal, menu mobile, fundo animado
+js/effects.js           scroll reveal, parallax, fundo animado
+js/nav.js               menu mobile, link ativo do menu
+js/tilt3d.js            tilt 3D nos cards (segue o mouse)
+js/plaque3d.js          plaquinha 3D em canvas (arrastável)
 js/calculator.js        calculadora de orçamento
 js/catalog.js           renderiza data/catalogo.json
 js/gallery.js           renderiza data/galeria.json + lightbox

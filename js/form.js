@@ -137,8 +137,7 @@
   }
 
   function serviceLabel(s) {
-    return s === "corte" ? "Corte a laser"
-      : s === "personalizado" ? "Personalizado / brinde"
+    return s === "personalizado" ? "Personalizado / brinde"
       : s === "foto" ? "Gravacao de foto/imagem"
       : "Gravacao a laser";
   }

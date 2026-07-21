@@ -9,7 +9,7 @@
    Ao publicar mudanças, troque o número da versão em CACHE_VERSION para
    forçar a atualização no celular dos clientes.
    ============================================================================= */
-const CACHE_VERSION = "acmer-v2";
+const CACHE_VERSION = "acmer-v3";
 const SHELL_CACHE = CACHE_VERSION + "-shell";
 const IMG_CACHE = CACHE_VERSION + "-img";
 

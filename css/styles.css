@@ -348,7 +348,7 @@ footer { border-top: 1px solid var(--line); padding: 50px 0 30px; background: rg
   position: absolute; top: 10px; right: 16px; font-family: var(--font-mono);
   font-size: 34px; color: rgba(47,255,154,.18); font-weight: 700;
 }
-.step h3 { font-size: 17px; margin: 4px 0 8px; position: relative; }
+.step h3 { font-size: 17px; margin: 4px 0 8px; padding-right: 52px; position: relative; }
 .step p { color: var(--ink-dim); font-size: 14px; position: relative; }
 
 /* ---------- CONTRASTE ANTES / DEPOIS (o problema) ---------- */
